@@ -8,82 +8,106 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link href="https://assets.calendly.com/assets/external/widget.css" rel="stylesheet">
     <style>
-        /* IMPORTANT: If font size changes are not visible, try a HARD REFRESH in your browser. */
-        /* Windows/Linux: Ctrl+Shift+R or Ctrl+F5 | Mac: Cmd+Shift+R */
         html {
-            scroll-behavior: smooth; /* Smooth scroll for anchor links */
+            scroll-behavior: smooth;
         }
         body {
             font-family: 'Inter', sans-serif;
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
-            background-color: #f8fafc; /* Lighter overall background - slate-50 */
-            color: #334155; /* Default text color - slate-700 */
-            overflow-x: hidden; /* Prevent horizontal scrollbars from animations */
+            background-color: #020617; /* Nearly black - slate-950 */
+            color: #e2e8f0; /* Default light text - slate-200 */
+            overflow-x: hidden;
         }
-        .hero-gradient {
-            /* Refined gradient for a more modern feel */
-            background: linear-gradient(135deg, #0f172a 0%, #1e293b 70%, #334155 100%); /* Deeper start, smoother transition */
-            color: #f8fafc; /* slate-50 for text on dark gradient */
+        .glow-effect-blue {
+            box-shadow: 0 0 15px 5px rgba(59, 130, 246, 0.4), /* Blue glow */
+                        0 0 30px 10px rgba(59, 130, 246, 0.2);
+        }
+        .glow-effect-purple {
+             box-shadow: 0 0 15px 5px rgba(139, 92, 246, 0.4), /* Purple glow */
+                         0 0 30px 10px rgba(139, 92, 246, 0.2);
+        }
+        .text-glow-blue {
+            text-shadow: 0 0 8px rgba(59, 130, 246, 0.7), 0 0 10px rgba(59, 130, 246, 0.5);
+        }
+        .text-glow-white {
+            text-shadow: 0 0 8px rgba(255, 255, 255, 0.3);
+        }
+
+        .hero-section {
+            background: linear-gradient(180deg, #020617 0%, #0f172a 50%, #020617 100%); /* Dark gradient with subtle mid-tone */
+            padding-bottom: 4rem; 
         }
 
         #hero h1 {
-             font-size: 3.25rem;   /* Approx 52px */
-             line-height: 1.15;
-             font-weight: 800;  /* Extra bold for impact */
+             font-size: 3rem;
+             line-height: 1.2;
+             font-weight: 800;
              letter-spacing: -0.025em;
+             color: #f8fafc; /* slate-50 */
+             margin-bottom: 1.5rem;
         }
         #hero p {
-            color: #cbd5e1; /* slate-300 for better contrast on dark gradient */
+            color: #cbd5e1; /* slate-300 */
+            font-size: 1.125rem; /* text-lg */
+            margin-bottom: 2.5rem;
         }
+        /* Video placeholder style removed as the element is removed */
 
         .section-title {
-            font-size: 2.5rem; /* Approx 40px */
+            font-size: 2.25rem;
             font-weight: 700;
-            margin-bottom: 2.5rem; /* Increased margin */
+            margin-bottom: 3rem;
             text-align: center;
-            letter-spacing: -0.025em;
-            color: #1e293b; /* slate-800 */
+            letter-spacing: -0.02em;
+            color: #f8fafc; /* slate-50 */
         }
         .subsection-title {
-            font-size: 1.25rem; /* Approx 20px */
+            font-size: 1.25rem;
             font-weight: 600;
-            margin-bottom: 0.75rem; /* mb-3 */
-            color: #1e293b; /* slate-800 */
+            margin-bottom: 0.75rem;
+            color: #e2e8f0; /* slate-200 */
         }
         .cta-button {
             display: inline-block;
-            padding: 0.875rem 2rem; /* py-3.5 px-8 */
+            padding: 0.875rem 2rem;
             font-weight: 600;
-            border-radius: 0.5rem; /* rounded-lg for a softer look */
+            border-radius: 0.5rem;
             text-decoration: none;
-            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); /* Smoother transition */
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1); /* Softer shadow */
-        }
-        .cta-button-primary {
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
             background-color: #2563eb; /* blue-600 */
             color: white;
+            border: 1px solid #2563eb; /* blue-600 */
+            box-shadow: 0 0 10px 2px rgba(59, 130, 246, 0.4), /* Blue glow */
+                        0 0 20px 5px rgba(59, 130, 246, 0.2);
         }
-        .cta-button-primary:hover {
+        .cta-button:hover {
             background-color: #1d4ed8; /* blue-700 */
-            transform: translateY(-3px) scale(1.03); /* More noticeable hover effect */
-            box-shadow: 0 7px 20px rgba(37, 99, 235, 0.25); /* Colored shadow on hover */
+            border-color: #1d4ed8;
+            transform: translateY(-3px) scale(1.03);
+            box-shadow: 0 0 15px 5px rgba(59, 130, 246, 0.5),
+                        0 0 30px 10px rgba(59, 130, 246, 0.3);
         }
         .card {
-            background-color: white;
-            border-radius: 0.75rem; /* rounded-xl */
-            padding: 2rem; /* p-8, more spacing */
-            box-shadow: 0 8px 16px rgba(148, 163, 184, 0.15); /* Softer, more diffused shadow - slate-400 based */
-            transition: transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1), box-shadow 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+            background-color: #0f172a; /* slate-900 */
+            border-radius: 0.75rem;
+            padding: 2rem;
+            border: 1px solid #1e293b; /* slate-800 border */
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1), /* Subtle shadow for depth */
+                        inset 0 0 10px rgba(59, 130, 246, 0.1); /* Inner blue subtle glow */
+            transition: transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1), box-shadow 0.4s cubic-bezier(0.25, 0.8, 0.25, 1), border-color 0.4s;
             display: flex;
             flex-direction: column;
         }
         .card:hover {
-            transform: translateY(-8px); /* Slightly more lift */
-            box-shadow: 0 15px 30px rgba(148, 163, 184, 0.2);
+            transform: translateY(-8px);
+            border-color: #2563eb; /* Blue border on hover */
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2),
+                        inset 0 0 15px rgba(59, 130, 246, 0.2),
+                        0 0 20px 5px rgba(59, 130, 246, 0.2); /* Outer glow on hover */
         }
         .step-number {
-            background-color: #2563eb; /* blue-600, matching primary CTA */
+            background-color: #2563eb;
             color: white;
             border-radius: 9999px;
             width: 2.75rem;
@@ -91,140 +115,136 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.125rem; /* text-lg */
+            font-size: 1.125rem;
             font-weight: 700;
-            margin-right: 1rem; /* mr-4 */
+            margin-right: 1rem;
             flex-shrink: 0;
-            box-shadow: 0 4px 10px rgba(37, 99, 235, 0.2);
+            box-shadow: 0 0 8px rgba(59, 130, 246, 0.5);
         }
-        .dark-section {
-            background-color: #0f172a; /* slate-900 */
-            color: #cbd5e1; /* slate-300 */
-        }
-        .dark-section .section-title {
-            color: #f8fafc; /* slate-50 */
-        }
-        .dark-section .card {
-            background-color: #1e293b; /* slate-800 */
-            box-shadow: 0 8px 16px rgba(0,0,0, 0.2);
-        }
-        .dark-section .card:hover {
-             box-shadow: 0 15px 30px rgba(0,0,0, 0.3);
-        }
-        .dark-section .card .subsection-title {
-             color: #e2e8f0; /* slate-200 */
-        }
-        .dark-section .card p {
-            color: #94a3b8; /* slate-400 */
-        }
-        /* Removed .dark-section .cta-button as the primary CTA button is replaced by Calendly */
 
         p, li span {
             font-family: 'Inter', sans-serif;
-            font-size: 1rem; /* text-base */
-            line-height: 1.7; /* Increased for readability */
-            color: #475569; /* slate-600 for paragraphs */
+            font-size: 1rem;
+            line-height: 1.7;
+            color: #94a3b8; /* slate-400 for paragraphs */
         }
-        .dark-section p, .dark-section li span {
-            color: #94a3b8; /* slate-400 for paragraphs in dark section */
+        #who-is-this-for .card { /* Specific card in "who is this for" section */
+             background-color: #1e293b; /* Slightly lighter dark - slate-800 */
         }
-        
-        @media (min-width: 768px) { /* md breakpoint */
-            #hero h1 {
-                font-size: 4rem; /* Approx 64px */
-            }
-            .section-title {
-                font-size: 2.75rem; /* Approx 44px */
-            }
+        #who-is-this-for .card .subsection-title, #who-is-this-for .card span {
+            color: #e2e8f0; /* slate-200 */
+        }
+        #who-is-this-for .card svg {
+            color: #3b82f6; /* blue-500 */
         }
 
-        /* Animation Helper Classes */
+        #contact {
+             background: #020617; /* Match body background */
+        }
+        #contact h2 {
+            color: #f8fafc; /* slate-50 */
+        }
+        #contact p {
+            color: #cbd5e1; /* slate-300 */
+        }
+        .calendly-inline-widget {
+            border-radius: 0.5rem;
+            overflow: hidden; /* To make border-radius apply to the iframe */
+        }
+        
+        @media (min-width: 768px) {
+            #hero h1 {
+                font-size: 3.75rem;
+            }
+            .section-title {
+                font-size: 2.75rem;
+            }
+            /* Video placeholder media queries removed */
+        }
+        @media (min-width: 1024px) {
+            #hero h1 {
+                font-size: 4.25rem;
+            }
+            /* Video placeholder media queries removed */
+        }
+
         .animate-on-scroll {
             opacity: 0;
-            transform: translateY(30px);
-            transition: opacity 0.6s cubic-bezier(0.25, 0.8, 0.25, 1), transform 0.6s cubic-bezier(0.25, 0.8, 0.25, 1);
+            transform: translateY(40px); /* Increased translate for more noticeable entry */
+            transition: opacity 0.7s cubic-bezier(0.25, 0.8, 0.25, 1), transform 0.7s cubic-bezier(0.25, 0.8, 0.25, 1);
         }
         .animate-on-scroll.is-visible {
             opacity: 1;
             transform: translateY(0);
         }
-        /* Staggered animation for card children */
         .animate-on-scroll.is-visible .card {
-            transition-delay: calc(0.1s * var(--card-index, 0));
+            transition-delay: calc(0.15s * var(--card-index, 0)); /* Slightly increased delay */
         }
-        /* Ensure Calendly widget is not affected by opacity transitions if wrapped */
-        .calendly-inline-widget {
-            opacity: 1 !important; /* Override animation opacity if needed */
-        }
-
     </style>
 </head>
-<body class="bg-slate-50 text-slate-700">
+<body class="bg-slate-950 text-slate-200">
 
-    <section id="hero" class="hero-gradient text-white py-20 md:py-32">
-        <div class="container mx-auto px-6 text-center animate-on-scroll">
-            <h1 class="font-bold mb-6 leading-tight">
-                We Will Reach Out, Qualify, & Book New Client Calls Directly to Your Calendar.
-            </h1>
-            <p class="text-lg md:text-xl mb-10 max-w-2xl mx-auto">
-                We find people on Instagram who are interested in your services and book sales calls into your calendar, so you can focus on what you're good at. Your business.
-            </p>
-            <a href="https://calendly.com/mako-young0/introductory-call" target="_blank" rel="noopener noreferrer" class="cta-button cta-button-primary text-lg">
-                Schedule Your Call
-            </a>
+    <section id="hero" class="hero-section text-white py-16 md:py-24">
+        <div class="container mx-auto px-6 text-center">
+            <div class="animate-on-scroll">
+                <h1 class="font-extrabold mb-6 leading-tight text-glow-white">
+                    Get Sales Appointments from Instagram, Scheduled Directly for You.
+                </h1>
+                <p class="text-lg md:text-xl my-10 max-w-2xl mx-auto"> We find people on Instagram who are interested in your services and book sales calls into your calendar. This lets you focus on growing your business.
+                </p>
+                <a href="#contact" class="cta-button text-lg">
+                    Schedule Your Call
+                </a>
+            </div>
         </div>
     </section>
 
-    <section id="how-it-works" class="py-16 md:py-24 bg-slate-50">
+    <section id="how-it-works" class="py-16 md:py-24">
         <div class="container mx-auto px-6">
-            <h2 class="section-title text-slate-800 animate-on-scroll">How We Secure Your Sales Calls</h2>
+            <h2 class="section-title animate-on-scroll text-glow-blue">How We Secure Your Sales Calls</h2>
             <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mt-12">
                 <div class="card animate-on-scroll" style="--card-index: 1;">
                     <div class="flex items-start mb-4">
                         <div class="step-number">1</div>
-                        <h3 class="subsection-title text-slate-800 mt-1">Identifying Potential Clients</h3>
+                        <h3 class="subsection-title mt-1">Identifying Potential Clients</h3>
                     </div>
-                    <p class="text-slate-600">
+                    <p>
                         We search Instagram for individuals who are likely interested in what you offer. We analyze their profile content, hashtags used, and followed accounts.
                     </p>
                 </div>
-
                 <div class="card animate-on-scroll" style="--card-index: 2;">
                     <div class="flex items-start mb-4">
                         <div class="step-number">2</div>
-                        <h3 class="subsection-title text-slate-800 mt-1">Initiating Conversations</h3>
+                        <h3 class="subsection-title mt-1">Initiating Conversations</h3>
                     </div>
-                    <p class="text-slate-600">
+                    <p>
                         Using established Instagram accounts, we send approximately 300 targeted messages daily. This amounts to around 9,000 messages per month to connect with prospects.
                     </p>
                 </div>
-
                 <div class="card animate-on-scroll" style="--card-index: 3;">
                     <div class="flex items-start mb-4">
                         <div class="step-number">3</div>
-                        <h3 class="subsection-title text-slate-800 mt-1">Qualifying Interested Leads</h3>
+                        <h3 class="subsection-title mt-1">Qualifying Interested Leads</h3>
                     </div>
-                    <p class="text-slate-600">
+                    <p>
                         Our team engages in real conversations with everyone who responds. We carefully assess if their needs align with your services.
                     </p>
                 </div>
-
                 <div class="card animate-on-scroll" style="--card-index: 4;">
                     <div class="flex items-start mb-4">
                         <div class="step-number">4</div>
-                        <h3 class="subsection-title text-slate-800 mt-1">Presenting Your Value</h3>
+                        <h3 class="subsection-title mt-1">Presenting Your Value</h3>
                     </div>
-                    <p class="text-slate-600">
+                    <p>
                         We explain the benefits of your business to potential clients. We answer their initial questions to prepare them for a productive sales call.
                     </p>
                 </div>
-
                 <div class="card animate-on-scroll" style="--card-index: 5;">
                     <div class="flex items-start mb-4">
                         <div class="step-number">5</div>
-                        <h3 class="subsection-title text-slate-800 mt-1">Scheduling the Appointment</h3>
+                        <h3 class="subsection-title mt-1">Scheduling the Appointment</h3>
                     </div>
-                    <p class="text-slate-600">
+                    <p>
                         Finally, we book the sales call directly into your calendar. You can then connect with an informed and interested individual.
                     </p>
                 </div>
@@ -233,9 +253,8 @@
         </div>
     </section>
 
-    <section id="benefits" class="py-16 md:py-24 dark-section">
-        <div class="container mx-auto px-6">
-            <h2 class="section-title animate-on-scroll">Advantages for Your Business</h2>
+    <section id="benefits" class="py-16 md:py-24 bg-slate-900"> <div class="container mx-auto px-6">
+            <h2 class="section-title animate-on-scroll text-glow-blue">Advantages for Your Business</h2>
             <div class="grid md:grid-cols-2 gap-8 mt-12">
                 <div class="card animate-on-scroll" style="--card-index: 1;">
                     <h3 class="subsection-title text-blue-400">High-Quality Leads</h3>
@@ -257,80 +276,74 @@
         </div>
     </section>
 
-    <section id="who-is-this-for" class="py-16 md:py-24 bg-slate-50">
+    <section id="who-is-this-for" class="py-16 md:py-24">
         <div class="container mx-auto px-6 text-center">
             <div class="animate-on-scroll">
-                <h2 class="section-title text-slate-800">Is This Service Right for You?</h2>
-                <p class="text-lg text-slate-600 mb-10 max-w-3xl mx-auto">
+                <h2 class="section-title text-glow-blue">Is This Service Right for You?</h2>
+                <p class="text-lg md:text-xl mb-10 max-w-3xl mx-auto">
                     If you are a coach, business owner, or service provider looking for more sales calls from Instagram, this service is designed for you. We help you acquire more clients without the usual effort.
                 </p>
             </div>
-            <div class="inline-block bg-white p-8 rounded-xl shadow-xl text-left max-w-lg mx-auto animate-on-scroll" style="--card-index: 1;">
-                <h4 class="text-xl font-semibold text-slate-700 mb-6">This service is ideal if:</h4>
+            <div class="card inline-block p-8 rounded-xl text-left max-w-lg mx-auto animate-on-scroll" style="--card-index: 1;">
+                <h4 class="text-xl font-semibold mb-6 subsection-title">This service is ideal if:</h4>
                 <ul class="space-y-4">
                     <li class="flex items-start">
-                        <svg class="w-6 h-6 text-blue-500 mr-3 flex-shrink-0 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                        <span class="text-slate-600">You want a steady flow of clients but lack time for outreach.</span>
+                        <svg class="w-6 h-6 mr-3 flex-shrink-0 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        <span>You want a steady flow of clients but lack time for outreach.</span>
                     </li>
                     <li class="flex items-start">
-                        <svg class="w-6 h-6 text-blue-500 mr-3 flex-shrink-0 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                        <span class="text-slate-600">Your own Instagram DM efforts haven't produced desired results.</span>
+                        <svg class="w-6 h-6 mr-3 flex-shrink-0 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        <span>Your own Instagram DM efforts haven't produced desired results.</span>
                     </li>
                     <li class="flex items-start">
-                        <svg class="w-6 h-6 text-blue-500 mr-3 flex-shrink-0 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                        <span class="text-slate-600">You need a dependable method for getting regular sales calls.</span>
+                        <svg class="w-6 h-6 mr-3 flex-shrink-0 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        <span>You need a dependable method for getting regular sales calls.</span>
                     </li>
                     <li class="flex items-start">
-                        <svg class="w-6 h-6 text-blue-500 mr-3 flex-shrink-0 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                        <span class="text-slate-600">You have satisfied past clients and aim to add 5+ new clients monthly.</span>
+                        <svg class="w-6 h-6 mr-3 flex-shrink-0 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        <span>You have satisfied past clients and aim to add 5+ new clients monthly.</span>
                     </li>
                 </ul>
             </div>
         </div>
     </section>
 
-    <section id="contact" class="py-20 md:py-32 hero-gradient text-white">
+    <section id="contact" class="py-20 md:py-24">
         <div class="container mx-auto px-6 text-center animate-on-scroll">
-            <h2 class="text-3xl md:text-4xl font-bold mb-10"> Ready to Increase Your Sales Calls from Instagram?
+            <h2 class="text-3xl md:text-4xl font-bold mb-10 text-glow-blue">
+                Ready to Increase Your Sales Calls?
             </h2>
-            <p class="text-lg md:text-xl text-slate-300 mb-10 max-w-xl mx-auto">
-                Let us assist you in getting more sales appointments. Schedule directly below or use the floating badge.
+            <p class="text-lg md:text-xl mb-10 max-w-xl mx-auto">
+                Schedule directly below or use the floating badge.
             </p>
             
             <div class="calendly-inline-widget" data-url="https://calendly.com/mako-young0/introductory-call" style="min-width:320px;height:700px;"></div>
             <script type="text/javascript" src="https://assets.calendly.com/assets/external/widget.js" async></script>
-            <p class="text-sm text-slate-400 mt-8">Or email us: <a href="mailto:mako.young0@gmail.com" class="underline hover:text-slate-200 transition-colors duration-300">mako.young0@gmail.com</a></p>
+            
+            <p class="text-sm mt-8">Or email us: <a href="mailto:mako.young0@gmail.com" class="underline hover:text-blue-400 transition-colors duration-300">mako.young0@gmail.com</a></p>
         </div>
     </section>
 
-    <footer class="bg-slate-900 text-slate-400 py-10 text-center">
+    <footer class="bg-slate-950 py-10 text-center border-t border-slate-800">
         <div class="container mx-auto px-6">
-            <p class="text-sm">&copy; <span id="year"></span> Mako Young. All Rights Reserved.</p>
+            <p class="text-sm text-slate-500">&copy; <span id="year"></span> Mako Young. All Rights Reserved.</p>
         </div>
     </footer>
 
     <script>
-        // Set current year in footer
         document.getElementById('year').textContent = new Date().getFullYear();
 
-        // Intersection Observer for scroll animations
         const animatedElements = document.querySelectorAll('.animate-on-scroll');
-
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
                     entry.target.classList.add('is-visible');
                 }
             });
-        }, {
-            threshold: 0.1 
-        });
-
-        animatedElements.forEach(el => {
-            observer.observe(el);
-        });
+        }, { threshold: 0.1 });
+        animatedElements.forEach(el => observer.observe(el));
     </script>
     <script src="https://assets.calendly.com/assets/external/widget.js" type="text/javascript" async></script>
-    <script type="text/javascript">window.onload = function() { Calendly.initBadgeWidget({ url: 'https://calendly.com/mako-young0/introductory-call', text: 'Schedule time with me', color: '#0069ff', textColor: '#ffffff', branding: undefined }); }</script>
-    </body>
+    <script type="text/javascript">window.onload = function() { Calendly.initBadgeWidget({ url: 'https://calendly.com/mako-young0/introductory-call', text: 'Schedule time with me', color: '#2563eb', textColor: '#ffffff', branding: undefined }); }</script>
+</body>
 </html>
