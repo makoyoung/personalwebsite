@@ -19,13 +19,63 @@
             color: #e2e8f0; /* Default light text - slate-200 */
             overflow-x: hidden;
         }
-        .glow-effect-blue {
-            box-shadow: 0 0 15px 5px rgba(59, 130, 246, 0.4), /* Blue glow */
-                        0 0 30px 10px rgba(59, 130, 246, 0.2);
+        /* Navbar Styles */
+        .navbar {
+            background-color: #0f172a; /* slate-900, slightly lighter than body for definition */
+            padding: 1rem 1.5rem; /* py-4 px-6 */
+            border-bottom: 1px solid #1e293b; /* slate-800 */
         }
-        .glow-effect-purple {
-             box-shadow: 0 0 15px 5px rgba(139, 92, 246, 0.4), /* Purple glow */
-                         0 0 30px 10px rgba(139, 92, 246, 0.2);
+        .navbar .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1280px; /* xl */
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .navbar-brand {
+            font-size: 1.25rem; /* text-xl */
+            font-weight: 700; /* bold */
+            color: #f8fafc; /* slate-50 */
+            text-decoration: none;
+        }
+        .navbar-links {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem; /* gap-6 */
+        }
+        .navbar-links a {
+            color: #cbd5e1; /* slate-300 */
+            text-decoration: none;
+            font-weight: 500; /* medium */
+            transition: color 0.3s ease;
+        }
+        .navbar-links a:hover {
+            color: #f8fafc; /* slate-50 */
+        }
+        .navbar-button {
+            padding: 0.5rem 1rem; /* py-2 px-4 */
+            font-weight: 600; /* semibold */
+            border-radius: 0.375rem; /* rounded-md */
+            background-color: #2563eb; /* blue-600 */
+            color: white;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            box-shadow: 0 0 8px 1px rgba(59, 130, 246, 0.3);
+        }
+        .navbar-button:hover {
+            background-color: #1d4ed8; /* blue-700 */
+            transform: translateY(-1px);
+            box-shadow: 0 0 12px 3px rgba(59, 130, 246, 0.4);
+        }
+        /* Mobile menu button (optional, for future expansion) */
+        .mobile-menu-button {
+            display: none; /* Hidden by default, shown on small screens if implemented */
+            color: #cbd5e1;
+        }
+
+        .glow-effect-blue {
+            box-shadow: 0 0 15px 5px rgba(59, 130, 246, 0.4),
+                        0 0 30px 10px rgba(59, 130, 246, 0.2);
         }
         .text-glow-blue {
             text-shadow: 0 0 8px rgba(59, 130, 246, 0.7), 0 0 10px rgba(59, 130, 246, 0.5);
@@ -35,7 +85,7 @@
         }
 
         .hero-section {
-            background: linear-gradient(180deg, #020617 0%, #0f172a 50%, #020617 100%); /* Dark gradient with subtle mid-tone */
+            background: linear-gradient(180deg, #020617 0%, #0f172a 50%, #020617 100%);
             padding-bottom: 4rem; 
         }
 
@@ -44,15 +94,14 @@
              line-height: 1.2;
              font-weight: 800;
              letter-spacing: -0.025em;
-             color: #f8fafc; /* slate-50 */
+             color: #f8fafc;
              margin-bottom: 1.5rem;
         }
         #hero p {
-            color: #cbd5e1; /* slate-300 */
-            font-size: 1.125rem; /* text-lg */
+            color: #cbd5e1;
+            font-size: 1.125rem;
             margin-bottom: 2.5rem;
         }
-        /* Video placeholder style removed as the element is removed */
 
         .section-title {
             font-size: 2.25rem;
@@ -60,51 +109,51 @@
             margin-bottom: 3rem;
             text-align: center;
             letter-spacing: -0.02em;
-            color: #f8fafc; /* slate-50 */
+            color: #f8fafc;
         }
         .subsection-title {
             font-size: 1.25rem;
             font-weight: 600;
             margin-bottom: 0.75rem;
-            color: #e2e8f0; /* slate-200 */
+            color: #e2e8f0;
         }
-        .cta-button {
+        .cta-button { /* Main CTA button in hero */
             display: inline-block;
             padding: 0.875rem 2rem;
             font-weight: 600;
             border-radius: 0.5rem;
             text-decoration: none;
             transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-            background-color: #2563eb; /* blue-600 */
+            background-color: #2563eb;
             color: white;
-            border: 1px solid #2563eb; /* blue-600 */
-            box-shadow: 0 0 10px 2px rgba(59, 130, 246, 0.4), /* Blue glow */
+            border: 1px solid #2563eb;
+            box-shadow: 0 0 10px 2px rgba(59, 130, 246, 0.4),
                         0 0 20px 5px rgba(59, 130, 246, 0.2);
         }
         .cta-button:hover {
-            background-color: #1d4ed8; /* blue-700 */
+            background-color: #1d4ed8;
             border-color: #1d4ed8;
             transform: translateY(-3px) scale(1.03);
             box-shadow: 0 0 15px 5px rgba(59, 130, 246, 0.5),
                         0 0 30px 10px rgba(59, 130, 246, 0.3);
         }
         .card {
-            background-color: #0f172a; /* slate-900 */
+            background-color: #0f172a;
             border-radius: 0.75rem;
             padding: 2rem;
-            border: 1px solid #1e293b; /* slate-800 border */
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1), /* Subtle shadow for depth */
-                        inset 0 0 10px rgba(59, 130, 246, 0.1); /* Inner blue subtle glow */
+            border: 1px solid #1e293b;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1),
+                        inset 0 0 10px rgba(59, 130, 246, 0.1);
             transition: transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1), box-shadow 0.4s cubic-bezier(0.25, 0.8, 0.25, 1), border-color 0.4s;
             display: flex;
             flex-direction: column;
         }
         .card:hover {
             transform: translateY(-8px);
-            border-color: #2563eb; /* Blue border on hover */
+            border-color: #2563eb;
             box-shadow: 0 10px 20px rgba(0,0,0,0.2),
                         inset 0 0 15px rgba(59, 130, 246, 0.2),
-                        0 0 20px 5px rgba(59, 130, 246, 0.2); /* Outer glow on hover */
+                        0 0 20px 5px rgba(59, 130, 246, 0.2);
         }
         .step-number {
             background-color: #2563eb;
@@ -126,30 +175,30 @@
             font-family: 'Inter', sans-serif;
             font-size: 1rem;
             line-height: 1.7;
-            color: #94a3b8; /* slate-400 for paragraphs */
+            color: #94a3b8;
         }
-        #who-is-this-for .card { /* Specific card in "who is this for" section */
-             background-color: #1e293b; /* Slightly lighter dark - slate-800 */
+        #who-is-this-for .card {
+             background-color: #1e293b;
         }
         #who-is-this-for .card .subsection-title, #who-is-this-for .card span {
-            color: #e2e8f0; /* slate-200 */
+            color: #e2e8f0;
         }
         #who-is-this-for .card svg {
-            color: #3b82f6; /* blue-500 */
+            color: #3b82f6;
         }
 
         #contact {
-             background: #020617; /* Match body background */
+             background: #020617;
         }
         #contact h2 {
-            color: #f8fafc; /* slate-50 */
+            color: #f8fafc;
         }
         #contact p {
-            color: #cbd5e1; /* slate-300 */
+            color: #cbd5e1;
         }
         .calendly-inline-widget {
             border-radius: 0.5rem;
-            overflow: hidden; /* To make border-radius apply to the iframe */
+            overflow: hidden;
         }
         
         @media (min-width: 768px) {
@@ -159,18 +208,41 @@
             .section-title {
                 font-size: 2.75rem;
             }
-            /* Video placeholder media queries removed */
         }
         @media (min-width: 1024px) {
             #hero h1 {
                 font-size: 4.25rem;
             }
-            /* Video placeholder media queries removed */
+             .navbar-links { /* Ensure links are visible on larger screens */
+                display: flex;
+            }
+            .mobile-menu-button {
+                display: none;
+            }
         }
+         @media (max-width: 1023px) { /* Adjust for mobile menu if implemented */
+            .navbar-links {
+                /* Example: Hide links by default, show when mobile menu is toggled */
+                /* display: none; */ 
+                /* For now, let them wrap or reduce gap/font size if needed */
+                gap: 1rem; /* Smaller gap on smaller screens */
+            }
+            .navbar-links a {
+                font-size: 0.875rem; /* Slightly smaller font for nav links */
+            }
+            .navbar-button {
+                padding: 0.4rem 0.8rem;
+                font-size: 0.875rem;
+            }
+            /* .mobile-menu-button {
+                display: block; 
+            } */
+        }
+
 
         .animate-on-scroll {
             opacity: 0;
-            transform: translateY(40px); /* Increased translate for more noticeable entry */
+            transform: translateY(40px);
             transition: opacity 0.7s cubic-bezier(0.25, 0.8, 0.25, 1), transform 0.7s cubic-bezier(0.25, 0.8, 0.25, 1);
         }
         .animate-on-scroll.is-visible {
@@ -178,17 +250,33 @@
             transform: translateY(0);
         }
         .animate-on-scroll.is-visible .card {
-            transition-delay: calc(0.15s * var(--card-index, 0)); /* Slightly increased delay */
+            transition-delay: calc(0.15s * var(--card-index, 0));
         }
     </style>
 </head>
 <body class="bg-slate-950 text-slate-200">
 
+    <nav class="navbar">
+        <div class="container">
+            <a href="#" class="navbar-brand">Mako Young</a>
+            <div class="navbar-links">
+                <a href="#how-it-works">How it Works</a>
+                <a href="#benefits">Features</a>
+                <a href="#contact" class="navbar-button">Book Calls on Autopilot</a>
+            </div>
+            <!-- <button class="mobile-menu-button lg:hidden">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+                </svg>
+            </button> -->
+        </div>
+    </nav>
+
     <section id="hero" class="hero-section text-white py-16 md:py-24">
         <div class="container mx-auto px-6 text-center">
             <div class="animate-on-scroll">
                 <h1 class="font-extrabold mb-6 leading-tight text-glow-white">
-                    We Find, Chat, & Book Qualified Sales Calls Directly to Your Calendar.
+                    Get Sales Appointments from Instagram, Scheduled Directly for You.
                 </h1>
                 <p class="text-lg md:text-xl my-10 max-w-2xl mx-auto"> We find people on Instagram who are interested in your services and book sales calls into your calendar. This lets you focus on growing your business.
                 </p>
