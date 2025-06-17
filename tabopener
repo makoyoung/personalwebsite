@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Safe Tab Opener</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        /* Custom scrollbar */
+        textarea::-webkit-scrollbar, pre::-webkit-scrollbar {
+            width: 8px;
+        }
+        textarea::-webkit-scrollbar-track, pre::-webkit-scrollbar-track {
+            background: #2d3748;
+        }
+        textarea::-webkit-scrollbar-thumb, pre::-webkit-scrollbar-thumb {
+            background-color: #4a5568;
+            border-radius: 4px;
+        }
+        /* Style for disabled buttons */
+        button:disabled {
+            cursor: not-allowed;
+            opacity: 0.5;
+        }
+        /* Keyframes for the error shake animation */
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+            20%, 40%, 60%, 80% { transform: translateX(5px); }
+        }
+        /* Class to apply the shake animation and a red border */
+        .error-shake {
+            animation: shake 0.5s ease-in-out;
+            border-color: #ef4444; /* Red-500 */
+        }
+    </style>
+</head>
+<body class="bg-gray-900 text-gray-200 flex items-center justify-center min-h-screen p-4">
+
+    <div class="w-full max-w-5xl mx-auto">
+        <div class="bg-gray-800 border border-gray-700 rounded-lg shadow-lg p-6">
+            
+            <div class="text-center mb-6">
+                <h1 class="text-2xl sm:text-3xl font-bold text-white">Safe Tab Opener</h1>
+                <p class="text-gray-400 mt-2">Simulate human behavior to avoid being flagged.</p>
+            </div>
+
+            <div class="space-y-6">
+                <!-- URL Input Section -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <!-- URL Label and Controls -->
+                        <div class="flex justify-between items-center mb-2">
+                            <label for="urls" class="block text-sm font-medium text-gray-300">Paste URLs (one per line)</label>
+                            <div class="flex items-center gap-2">
+                                <button id="shuffle-btn" title="Shuffle List" class="bg-gray-700 hover:bg-gray-600 text-gray-300 font-semibold p-2 rounded-md text-xl transition-colors">
+                                    🔀
+                                </button>
+                                 <button id="clear-btn" title="Clear List" class="bg-gray-700 hover:bg-gray-600 text-gray-300 font-semibold p-2 rounded-md text-xl transition-colors">
+                                    🗑️
+                                </button>
+                            </div>
+                        </div>
+                        <textarea id="urls" rows="10" class="w-full bg-gray-900 border border-gray-600 rounded-md p-3 text-gray-200 focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="google.com&#10;github.com"></textarea>
+                    </div>
+                    <div id="shuffle-preview-container" style="display: none;">
+                        <label for="shuffled-urls-preview" class="block text-sm font-medium text-gray-400 mb-2 invisible">Shuffled Order</label>
+                        <div class="flex justify-between items-center mb-2">
+                           <label for="shuffled-urls-preview" class="block text-sm font-medium text-gray-400">Shuffled Order</label>
+                        </div>
+                        <textarea id="shuffled-urls-preview" rows="10" class="w-full bg-gray-900/50 border border-gray-700 rounded-md p-3 text-gray-400" readonly></textarea>
+                    </div>
+                </div>
+
+                <!-- Delay Settings -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label for="min-delay" class="block text-sm font-medium text-gray-300 mb-2">Minimum Delay (seconds):</label>
+                        <input type="number" id="min-delay" value="7" min="0" class="w-full bg-gray-900 border border-gray-600 rounded-md p-3 text-gray-200 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors">
+                    </div>
+                    <div>
+                        <label for="max-delay" class="block text-sm font-medium text-gray-300 mb-2">Maximum Delay (seconds):</label>
+                        <input type="number" id="max-delay" value="11" min="0" class="w-full bg-gray-900 border border-gray-600 rounded-md p-3 text-gray-200 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors">
+                    </div>
+                </div>
+                
+                <!-- Estimate -->
+                <div class="bg-gray-900/50 rounded-md px-3 py-2 border border-gray-700">
+                    <p id="estimate-time" class="text-sm text-gray-400 text-center"></p>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="space-y-4">
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                         <button id="start-btn" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-4 rounded-md transition-colors">Start Opening</button>
+                         <button id="pause-btn" class="w-full bg-yellow-600 hover:bg-yellow-700 text-white font-semibold py-3 px-4 rounded-md transition-colors">Pause</button>
+                        <button id="stop-btn" class="w-full bg-red-600 hover:bg-red-700 text-white font-semibold py-3 px-4 rounded-md transition-colors">Stop</button>
+                    </div>
+                    <button id="quick-start-btn" class="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-4 rounded-md transition-colors">Quick Start (for pop-up permission)</button>
+                </div>
+            </div>
+
+            <!-- Status and Report Area -->
+            <div id="status-container" class="mt-6 text-center p-4 bg-gray-900/50 border border-gray-700 rounded-md" style="display: none;">
+                <p id="status-message" class="text-gray-300 min-h-[24px]"></p>
+                <p id="countdown-timer" class="text-gray-400 text-sm min-h-[20px]"></p>
+                <div id="progress-bar-container" class="w-full bg-gray-700 rounded-full h-2.5 mt-2" style="display:none;">
+                    <div id="progress-bar" class="bg-blue-600 h-2.5 rounded-full" style="width: 0%; transition: width 0.5s ease-in-out;"></div>
+                </div>
+                <!-- Final Report Section -->
+                <div id="report-container" class="mt-4 text-left" style="display: none;">
+                    <h3 class="text-lg font-semibold text-white mb-2">Completion Report</h3>
+                    <pre id="report-output" class="text-sm bg-gray-900 border border-gray-700 rounded-md p-4 max-h-48 overflow-y-auto text-gray-400"></pre>
+                </div>
+            </div>
+
+            <!-- Guide Section -->
+            <div class="mt-8 pt-6 border-t border-gray-700 text-left text-gray-400 text-sm space-y-4">
+                <h3 class="text-lg font-semibold text-white">How It Works</h3>
+                <p><strong>Safe Tab Opener:</strong> This tool opens a list of URLs in new tabs with a random delay between each one. This helps avoid getting flagged by websites for bot-like activity.</p>
+                <p><strong>Shuffle List:</strong> This button randomizes the order of your URLs. This adds an extra layer of security by ensuring the links are not opened in a predictable sequence, making the activity appear more human.</p>
+                <p><strong>Quick Start:</strong> This button instantly opens two websites. Its main purpose is to trigger your browser's pop-up permission request right away so you can enable it for this tool without waiting for the normal delay.</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- DOM Element References ---
+        const urlTextArea = document.getElementById('urls');
+        const minDelayInput = document.getElementById('min-delay');
+        const maxDelayInput = document.getElementById('max-delay');
+        const shuffleButton = document.getElementById('shuffle-btn');
+        const clearButton = document.getElementById('clear-btn');
+        const estimateTimeDisplay = document.getElementById('estimate-time');
+        const startButton = document.getElementById('start-btn');
+        const pauseButton = document.getElementById('pause-btn');
+        const stopButton = document.getElementById('stop-btn');
+        const quickStartButton = document.getElementById('quick-start-btn');
+        const statusContainer = document.getElementById('status-container');
+        const statusMessage = document.getElementById('status-message');
+        const countdownTimer = document.getElementById('countdown-timer');
+        const progressBar = document.getElementById('progress-bar');
+        const progressBarContainer = document.getElementById('progress-bar-container');
+        const shufflePreviewContainer = document.getElementById('shuffle-preview-container');
+        const shufflePreviewTextarea = document.getElementById('shuffled-urls-preview');
+        const reportContainer = document.getElementById('report-container');
+        const reportOutput = document.getElementById('report-output');
+
+        // --- State Variables ---
+        let stopProcess = false;
+        let isPaused = false;
+        let countdownInterval;
+
+        // --- Core Functions ---
+        const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+
+        function initializeUI() {
+            startButton.disabled = false;
+            shuffleButton.disabled = false;
+            clearButton.disabled = false;
+            pauseButton.disabled = true;
+            stopButton.disabled = true;
+
+            shufflePreviewContainer.style.display = 'none';
+            reportContainer.style.display = 'none';
+            updateEstimate();
+        }
+
+        function updateEstimate() {
+            const urls = urlTextArea.value.split('\n').filter(url => url.trim());
+            const urlCount = urls.length;
+            const minDelay = parseFloat(minDelayInput.value) || 0;
+            const maxDelay = parseFloat(maxDelayInput.value) || 0;
+
+            if (urlCount < 2 || minDelay > maxDelay) {
+                estimateTimeDisplay.textContent = '';
+                return;
+            }
+
+            const avgDelay = (minDelay + maxDelay) / 2;
+            const totalSeconds = (urlCount - 1) * avgDelay;
+            
+            if (totalSeconds <= 0) {
+                 estimateTimeDisplay.textContent = 'Est. time: ~0s';
+                return;
+            }
+
+            const minutes = Math.floor(totalSeconds / 60);
+            const seconds = Math.round(totalSeconds % 60);
+
+            let estimateString = "Est. time: ";
+            if (minutes > 0) estimateString += `${minutes}m `;
+            estimateString += `${seconds}s`;
+            
+            estimateTimeDisplay.textContent = estimateString;
+        }
+
+        function startCountdown(secondsRemaining) {
+            if (countdownInterval) clearInterval(countdownInterval);
+            statusMessage.textContent = `Waiting for ${secondsRemaining.toFixed(1)} seconds...`;
+            const startTime = Date.now();
+            const totalDurationMs = secondsRemaining * 1000;
+
+            countdownInterval = setInterval(() => {
+                if (isPaused) {
+                    clearInterval(countdownInterval);
+                    return;
+                }
+                const elapsedMs = Date.now() - startTime;
+                const remainingMs = totalDurationMs - elapsedMs;
+                if (remainingMs > 0) {
+                    countdownTimer.textContent = `Next tab in ${(remainingMs / 1000).toFixed(1)}s`;
+                } else {
+                    countdownTimer.textContent = '';
+                    clearInterval(countdownInterval);
+                }
+            }, 100);
+        }
+
+        async function animateShufflePreview(urls) {
+            shufflePreviewContainer.style.display = 'block';
+            shufflePreviewTextarea.value = '';
+            for (const url of urls) {
+                if (stopProcess) break;
+                shufflePreviewTextarea.value += url + '\n';
+                shufflePreviewTextarea.scrollTop = shufflePreviewTextarea.scrollHeight;
+                await sleep(50);
+            }
+        }
+
+        function shuffleCurrentList() {
+            let urls = urlTextArea.value.split('\n').map(url => url.trim()).filter(url => url);
+            if (urls.length < 2) return;
+            for (let i = urls.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [urls[i], urls[j]] = [urls[j], urls[i]];
+            }
+            urlTextArea.value = urls.join('\n');
+            animateShufflePreview(urls);
+        }
+
+        function clearUrlList() {
+            urlTextArea.value = '';
+            shufflePreviewContainer.style.display = 'none';
+            updateEstimate();
+        }
+
+        function quickStart() {
+            window.open('https://google.com', '_blank');
+            window.open('https://youtube.com', '_blank');
+        }
+
+        function togglePause() {
+            isPaused = !isPaused;
+            if (isPaused) {
+                pauseButton.textContent = 'Resume';
+                statusMessage.textContent = 'Paused. Click Resume to continue.';
+                if (countdownInterval) {
+                     clearInterval(countdownInterval); // Stop visual countdown
+                }
+            } else {
+                pauseButton.textContent = 'Pause';
+                statusMessage.textContent = 'Resuming...';
+            }
+        }
+
+        async function startProcessing() {
+            let urls = urlTextArea.value.split('\n')
+                .map(url => url.trim())
+                .filter(url => url && !url.startsWith('#'))
+                .map(url => {
+                    if (url.startsWith('http://') || url.startsWith('https://')) {
+                        return url;
+                    }
+                    return `https://${url}`;
+                });
+            
+            const minDelay = parseFloat(minDelayInput.value);
+            const maxDelay = parseFloat(maxDelayInput.value);
+            
+            statusContainer.style.display = 'block';
+            reportContainer.style.display = 'none';
+
+            if (urls.length === 0) {
+                statusMessage.textContent = "Please provide at least one URL.";
+                return;
+            }
+            if (isNaN(minDelay) || isNaN(maxDelay) || minDelay < 0 || maxDelay < 0) {
+                statusMessage.textContent = "Please provide valid, non-negative numbers for delays.";
+                return;
+            }
+            if (minDelay > maxDelay) {
+                statusMessage.textContent = "Minimum delay cannot be greater than maximum delay.";
+                minDelayInput.classList.add('error-shake');
+                maxDelayInput.classList.add('error-shake');
+                setTimeout(() => {
+                    minDelayInput.classList.remove('error-shake');
+                    maxDelayInput.classList.remove('error-shake');
+                }, 500);
+                return;
+            }
+
+            stopProcess = false;
+            isPaused = false;
+            startButton.disabled = true;
+            shuffleButton.disabled = true;
+            clearButton.disabled = true;
+            pauseButton.disabled = false;
+            stopButton.disabled = false;
+            pauseButton.textContent = 'Pause';
+            
+            shufflePreviewContainer.style.display = 'none';
+            progressBarContainer.style.display = 'block';
+            progressBar.style.width = '0%';
+            statusMessage.textContent = 'Starting process...';
+            countdownTimer.textContent = '';
+            
+            const processStartTime = Date.now();
+            const delayLog = [];
+
+            for (let i = 0; i < urls.length; i++) {
+                let delaySeconds = 0;
+
+                // Handle delay for all but the first item
+                if (i > 0) {
+                    delaySeconds = Math.random() * (maxDelay - minDelay) + minDelay;
+                    delayLog.push(`Waited ${delaySeconds.toFixed(1)}s`);
+                    
+                    let timeWaited = 0;
+                    const waitInterval = 100; // Check every 100ms
+                    
+                    startCountdown(delaySeconds);
+
+                    while (timeWaited < delaySeconds * 1000) {
+                        if (stopProcess) break;
+                        if (!isPaused) {
+                           await sleep(waitInterval);
+                           timeWaited += waitInterval;
+                        } else {
+                           await sleep(waitInterval); // still sleep while paused to prevent busy-looping
+                        }
+                    }
+                }
+
+                if (stopProcess) {
+                    statusMessage.textContent = 'Process stopped by user.';
+                    break;
+                }
+                
+                const url = urls[i];
+                progressBar.style.width = `${((i + 1) / urls.length) * 100}%`;
+                statusMessage.textContent = `Opening URL ${i + 1} of ${urls.length}: ${url}`;
+                
+                window.open(url, '_blank');
+            }
+
+            if (countdownInterval) clearInterval(countdownInterval);
+            countdownTimer.textContent = '';
+
+            if (!stopProcess) {
+                statusMessage.textContent = `Done! All ${urls.length} URLs have been opened.`;
+                
+                const totalDurationSeconds = ((Date.now() - processStartTime) / 1000).toFixed(1);
+                let reportContent = 'Delay between tabs:\n';
+                reportContent += '---------------------\n';
+                reportContent += delayLog.join('\n') || 'N/A (only one URL)';
+                reportContent += `\n\n---------------------\n`;
+                reportContent += `Total task time: ${totalDurationSeconds}s`;
+
+                reportOutput.textContent = reportContent;
+                reportContainer.style.display = 'block';
+            }
+            
+            initializeUI();
+        }
+
+        function stopProcessing() {
+            stopProcess = true;
+            isPaused = false;
+            if (countdownInterval) clearInterval(countdownInterval);
+            countdownTimer.textContent = '';
+            statusMessage.textContent = 'Process stopped by user.';
+            
+            initializeUI();
+        }
+
+        // --- Event Listeners ---
+        startButton.addEventListener('click', startProcessing);
+        pauseButton.addEventListener('click', togglePause);
+        stopButton.addEventListener('click', stopProcessing);
+        shuffleButton.addEventListener('click', shuffleCurrentList);
+        clearButton.addEventListener('click', clearUrlList);
+        quickStartButton.addEventListener('click', quickStart);
+        urlTextArea.addEventListener('input', updateEstimate);
+        minDelayInput.addEventListener('input', updateEstimate);
+        maxDelayInput.addEventListener('input', updateEstimate);
+        
+        document.addEventListener('DOMContentLoaded', initializeUI);
+    </script>
+</body>
+</html>
