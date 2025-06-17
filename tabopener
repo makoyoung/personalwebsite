@@ -3,24 +3,82 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Safe Tab Opener</title>
+    <title>Safe URL Opener - Mako Young</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
+        html {
+            scroll-behavior: smooth;
+        }
         body {
             font-family: 'Inter', sans-serif;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            background-color: #020617; /* slate-950 */
+            color: #e2e8f0; /* slate-200 */
         }
-        /* Custom scrollbar */
+        /* Navbar Styles */
+        .navbar {
+            background-color: #0f172a; /* slate-900 */
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid #1e293b; /* slate-800 */
+            position: sticky;
+            top: 0;
+            z-index: 50;
+        }
+        .navbar .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1280px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .navbar-brand {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #f8fafc;
+            text-decoration: none;
+        }
+        .navbar-links {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+        .navbar-links a {
+            color: #cbd5e1;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+        .navbar-links a:hover {
+            color: #f8fafc;
+        }
+        .navbar-button {
+            padding: 0.5rem 1rem;
+            font-weight: 600;
+            border-radius: 0.375rem;
+            background-color: #2563eb;
+            color: white;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            box-shadow: 0 0 8px 1px rgba(59, 130, 246, 0.3);
+            text-decoration: none;
+        }
+        .navbar-button:hover {
+            background-color: #1d4ed8;
+            transform: translateY(-1px);
+            box-shadow: 0 0 12px 3px rgba(59, 130, 246, 0.4);
+        }
+
+         /* Custom scrollbar */
         textarea::-webkit-scrollbar, pre::-webkit-scrollbar {
             width: 8px;
         }
         textarea::-webkit-scrollbar-track, pre::-webkit-scrollbar-track {
-            background: #2d3748;
+            background: #1e293b; /* slate-800 */
         }
         textarea::-webkit-scrollbar-thumb, pre::-webkit-scrollbar-thumb {
-            background-color: #4a5568;
+            background-color: #475569; /* slate-600 */
             border-radius: 4px;
         }
         /* Style for disabled buttons */
@@ -34,101 +92,127 @@
             10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
             20%, 40%, 60%, 80% { transform: translateX(5px); }
         }
-        /* Class to apply the shake animation and a red border */
         .error-shake {
             animation: shake 0.5s ease-in-out;
-            border-color: #ef4444; /* Red-500 */
+            border-color: #ef4444 !important; /* Red-500 */
+        }
+        
+        @media (max-width: 1023px) {
+            .navbar-links {
+                gap: 1rem;
+            }
+            .navbar-links a {
+                font-size: 0.875rem;
+            }
+            .navbar-button {
+                padding: 0.4rem 0.8rem;
+                font-size: 0.875rem;
+            }
         }
     </style>
 </head>
-<body class="bg-gray-900 text-gray-200 flex items-center justify-center min-h-screen p-4">
+<body>
 
-    <div class="w-full max-w-5xl mx-auto">
-        <div class="bg-gray-800 border border-gray-700 rounded-lg shadow-lg p-6">
-            
-            <div class="text-center mb-6">
-                <h1 class="text-2xl sm:text-3xl font-bold text-white">Safe Tab Opener</h1>
-                <p class="text-gray-400 mt-2">Simulate human behavior to avoid being flagged.</p>
-            </div>
-
-            <div class="space-y-6">
-                <!-- URL Input Section -->
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div>
-                        <!-- URL Label and Controls -->
-                        <div class="flex justify-between items-center mb-2">
-                            <label for="urls" class="block text-sm font-medium text-gray-300">Paste URLs (one per line)</label>
-                            <div class="flex items-center gap-2">
-                                <button id="shuffle-btn" title="Shuffle List" class="bg-gray-700 hover:bg-gray-600 text-gray-300 font-semibold p-2 rounded-md text-xl transition-colors">
-                                    🔀
-                                </button>
-                                 <button id="clear-btn" title="Clear List" class="bg-gray-700 hover:bg-gray-600 text-gray-300 font-semibold p-2 rounded-md text-xl transition-colors">
-                                    🗑️
-                                </button>
-                            </div>
-                        </div>
-                        <textarea id="urls" rows="10" class="w-full bg-gray-900 border border-gray-600 rounded-md p-3 text-gray-200 focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="google.com&#10;github.com"></textarea>
-                    </div>
-                    <div id="shuffle-preview-container" style="display: none;">
-                        <label for="shuffled-urls-preview" class="block text-sm font-medium text-gray-400 mb-2 invisible">Shuffled Order</label>
-                        <div class="flex justify-between items-center mb-2">
-                           <label for="shuffled-urls-preview" class="block text-sm font-medium text-gray-400">Shuffled Order</label>
-                        </div>
-                        <textarea id="shuffled-urls-preview" rows="10" class="w-full bg-gray-900/50 border border-gray-700 rounded-md p-3 text-gray-400" readonly></textarea>
-                    </div>
-                </div>
-
-                <!-- Delay Settings -->
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div>
-                        <label for="min-delay" class="block text-sm font-medium text-gray-300 mb-2">Minimum Delay (seconds):</label>
-                        <input type="number" id="min-delay" value="7" min="0" class="w-full bg-gray-900 border border-gray-600 rounded-md p-3 text-gray-200 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors">
-                    </div>
-                    <div>
-                        <label for="max-delay" class="block text-sm font-medium text-gray-300 mb-2">Maximum Delay (seconds):</label>
-                        <input type="number" id="max-delay" value="11" min="0" class="w-full bg-gray-900 border border-gray-600 rounded-md p-3 text-gray-200 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors">
-                    </div>
-                </div>
-                
-                <!-- Estimate -->
-                <div class="bg-gray-900/50 rounded-md px-3 py-2 border border-gray-700">
-                    <p id="estimate-time" class="text-sm text-gray-400 text-center"></p>
-                </div>
-
-                <!-- Action Buttons -->
-                <div class="space-y-4">
-                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                         <button id="start-btn" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-4 rounded-md transition-colors">Start Opening</button>
-                         <button id="pause-btn" class="w-full bg-yellow-600 hover:bg-yellow-700 text-white font-semibold py-3 px-4 rounded-md transition-colors">Pause</button>
-                        <button id="stop-btn" class="w-full bg-red-600 hover:bg-red-700 text-white font-semibold py-3 px-4 rounded-md transition-colors">Stop</button>
-                    </div>
-                    <button id="quick-start-btn" class="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-4 rounded-md transition-colors">Quick Start (for pop-up permission)</button>
-                </div>
-            </div>
-
-            <!-- Status and Report Area -->
-            <div id="status-container" class="mt-6 text-center p-4 bg-gray-900/50 border border-gray-700 rounded-md" style="display: none;">
-                <p id="status-message" class="text-gray-300 min-h-[24px]"></p>
-                <p id="countdown-timer" class="text-gray-400 text-sm min-h-[20px]"></p>
-                <div id="progress-bar-container" class="w-full bg-gray-700 rounded-full h-2.5 mt-2" style="display:none;">
-                    <div id="progress-bar" class="bg-blue-600 h-2.5 rounded-full" style="width: 0%; transition: width 0.5s ease-in-out;"></div>
-                </div>
-                <!-- Final Report Section -->
-                <div id="report-container" class="mt-4 text-left" style="display: none;">
-                    <h3 class="text-lg font-semibold text-white mb-2">Completion Report</h3>
-                    <pre id="report-output" class="text-sm bg-gray-900 border border-gray-700 rounded-md p-4 max-h-48 overflow-y-auto text-gray-400"></pre>
-                </div>
-            </div>
-
-            <!-- Guide Section -->
-            <div class="mt-8 pt-6 border-t border-gray-700 text-left text-gray-400 text-sm space-y-4">
-                <h3 class="text-lg font-semibold text-white">How It Works</h3>
-                <p><strong>Safe Tab Opener:</strong> This tool opens a list of URLs in new tabs with a random delay between each one. This helps avoid getting flagged by websites for bot-like activity.</p>
-                <p><strong>Shuffle List:</strong> This button randomizes the order of your URLs. This adds an extra layer of security by ensuring the links are not opened in a predictable sequence, making the activity appear more human.</p>
-                <p><strong>Quick Start:</strong> This button instantly opens two websites. Its main purpose is to trigger your browser's pop-up permission request right away so you can enable it for this tool without waiting for the normal delay.</p>
+    <nav class="navbar">
+        <div class="container">
+            <a href="/" class="navbar-brand">Mako Young</a>
+            <div class="navbar-links">
+                <a href="/#how-it-works">How it Works</a>
+                <a href="/#benefits">Features</a>
+                <a href="/url-opener.html">URL Opener</a>
+                <a href="/#contact" class="navbar-button">Book Calls on Autopilot</a>
             </div>
         </div>
-    </div>
+    </nav>
+    
+    <main class="flex items-center justify-center min-h-[calc(100vh-65px)] p-4">
+        <div class="w-full max-w-5xl mx-auto">
+            <!-- Redesigned Tool Container -->
+            <div class="bg-slate-900 border border-slate-800 rounded-lg shadow-lg p-6">
+                
+                <div class="text-center mb-6">
+                    <h1 class="text-2xl sm:text-3xl font-bold text-slate-50">Safe URL Opener</h1>
+                    <p class="text-slate-400 mt-2">A tool to open URLs safely and simulate human behavior.</p>
+                </div>
+
+                <div class="space-y-6">
+                    <!-- URL Input Section -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <!-- URL Label and Controls -->
+                            <div class="flex justify-between items-center mb-2">
+                                <label for="urls" class="block text-sm font-medium text-slate-300">Paste URLs (one per line)</label>
+                                <div class="flex items-center gap-2">
+                                    <button id="shuffle-btn" title="Shuffle List" class="bg-slate-700 hover:bg-slate-600 text-slate-300 font-semibold p-2 rounded-md text-xl transition-colors">
+                                        🔀
+                                    </button>
+                                     <button id="clear-btn" title="Clear List" class="bg-slate-700 hover:bg-slate-600 text-slate-300 font-semibold p-2 rounded-md text-xl transition-colors">
+                                        🗑️
+                                    </button>
+                                </div>
+                            </div>
+                            <textarea id="urls" rows="10" class="w-full bg-slate-800 border border-slate-700 rounded-md p-3 text-slate-200 focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="google.com&#10;github.com"></textarea>
+                        </div>
+                        <div id="shuffle-preview-container" style="display: none;">
+                            <div class="flex justify-between items-center mb-2">
+                               <label class="block text-sm font-medium text-slate-400">Shuffled Order</label>
+                            </div>
+                            <textarea id="shuffled-urls-preview" rows="10" class="w-full bg-slate-950/50 border border-slate-700 rounded-md p-3 text-slate-400" readonly></textarea>
+                        </div>
+                    </div>
+
+                    <!-- Delay Settings -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                            <label for="min-delay" class="block text-sm font-medium text-slate-300 mb-2">Minimum Delay (seconds):</label>
+                            <input type="number" id="min-delay" value="7" min="0" class="w-full bg-slate-800 border border-slate-700 rounded-md p-3 text-slate-200 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors">
+                        </div>
+                        <div>
+                            <label for="max-delay" class="block text-sm font-medium text-slate-300 mb-2">Maximum Delay (seconds):</label>
+                            <input type="number" id="max-delay" value="11" min="0" class="w-full bg-slate-800 border border-slate-700 rounded-md p-3 text-slate-200 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors">
+                        </div>
+                    </div>
+                    
+                    <!-- Estimate -->
+                    <div class="bg-slate-800 rounded-md px-3 py-2 border border-slate-700">
+                        <p id="estimate-time" class="text-sm text-slate-400 text-center"></p>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="space-y-4">
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                             <button id="start-btn" class="navbar-button w-full justify-center !py-3">Start Opening</button>
+                             <button id="pause-btn" class="navbar-button w-full justify-center !py-3 bg-yellow-600 hover:bg-yellow-700">Pause</button>
+                            <button id="stop-btn" class="navbar-button w-full justify-center !py-3 bg-red-600 hover:bg-red-700">Stop</button>
+                        </div>
+                        <button id="quick-start-btn" class="navbar-button w-full justify-center !py-3 bg-green-600 hover:bg-green-700">Quick Start (for pop-up permission)</button>
+                    </div>
+                </div>
+
+                <!-- Status and Report Area -->
+                <div id="status-container" class="mt-6 text-center p-4 bg-slate-800 border border-slate-700 rounded-md" style="display: none;">
+                    <p id="status-message" class="text-slate-300 min-h-[24px]"></p>
+                    <p id="countdown-timer" class="text-slate-400 text-sm min-h-[20px]"></p>
+                    <div id="progress-bar-container" class="w-full bg-slate-700 rounded-full h-2.5 mt-2" style="display:none;">
+                        <div id="progress-bar" class="bg-blue-600 h-2.5 rounded-full" style="width: 0%; transition: width 0.5s ease-in-out;"></div>
+                    </div>
+                    <!-- Final Report Section -->
+                    <div id="report-container" class="mt-4 text-left" style="display: none;">
+                        <h3 class="text-lg font-semibold text-white mb-2">Completion Report</h3>
+                        <pre id="report-output" class="text-sm bg-slate-900 border border-slate-700 rounded-md p-4 max-h-48 overflow-y-auto text-slate-400"></pre>
+                    </div>
+                </div>
+
+                <!-- Guide Section -->
+                <div class="mt-8 pt-6 border-t border-slate-700 text-left text-slate-400 text-sm space-y-4">
+                    <h3 class="text-lg font-semibold text-white">How It Works</h3>
+                    <p><strong>Safe URL Opener:</strong> This tool opens a list of URLs in new tabs with a random delay between each one. This helps avoid getting flagged by websites for bot-like activity.</p>
+                    <p><strong>Shuffle List:</strong> This button randomizes the order of your URLs. This adds an extra layer of security by ensuring the links are not opened in a predictable sequence, making the activity appear more human.</p>
+                    <p><strong>Quick Start:</strong> This button instantly opens two websites. Its main purpose is to trigger your browser's pop-up permission request right away so you can enable it for this tool without waiting for the normal delay.</p>
+                </div>
+            </div>
+        </div>
+    </main>
 
     <script>
         // --- DOM Element References ---
