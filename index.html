@@ -24,6 +24,9 @@
             background-color: #0f172a; /* slate-900, slightly lighter than body for definition */
             padding: 1rem 1.5rem; /* py-4 px-6 */
             border-bottom: 1px solid #1e293b; /* slate-800 */
+            position: sticky;
+            top: 0;
+            z-index: 50;
         }
         .navbar .container {
             display: flex;
@@ -61,34 +64,17 @@
             color: white;
             transition: background-color 0.3s ease, transform 0.2s ease;
             box-shadow: 0 0 8px 1px rgba(59, 130, 246, 0.3);
+            text-decoration: none;
         }
         .navbar-button:hover {
             background-color: #1d4ed8; /* blue-700 */
             transform: translateY(-1px);
             box-shadow: 0 0 12px 3px rgba(59, 130, 246, 0.4);
         }
-        /* Mobile menu button (optional, for future expansion) */
-        .mobile-menu-button {
-            display: none; /* Hidden by default, shown on small screens if implemented */
-            color: #cbd5e1;
-        }
-
-        .glow-effect-blue {
-            box-shadow: 0 0 15px 5px rgba(59, 130, 246, 0.4),
-                        0 0 30px 10px rgba(59, 130, 246, 0.2);
-        }
-        .text-glow-blue {
-            text-shadow: 0 0 8px rgba(59, 130, 246, 0.7), 0 0 10px rgba(59, 130, 246, 0.5);
-        }
-        .text-glow-white {
-            text-shadow: 0 0 8px rgba(255, 255, 255, 0.3);
-        }
-
         .hero-section {
             background: linear-gradient(180deg, #020617 0%, #0f172a 50%, #020617 100%);
             padding-bottom: 4rem; 
         }
-
         #hero h1 {
              font-size: 3rem;
              line-height: 1.2;
@@ -102,7 +88,6 @@
             font-size: 1.125rem;
             margin-bottom: 2.5rem;
         }
-
         .section-title {
             font-size: 2.25rem;
             font-weight: 700;
@@ -213,32 +198,19 @@
             #hero h1 {
                 font-size: 4.25rem;
             }
-             .navbar-links { /* Ensure links are visible on larger screens */
-                display: flex;
-            }
-            .mobile-menu-button {
-                display: none;
-            }
         }
-         @media (max-width: 1023px) { /* Adjust for mobile menu if implemented */
+         @media (max-width: 1023px) {
             .navbar-links {
-                /* Example: Hide links by default, show when mobile menu is toggled */
-                /* display: none; */ 
-                /* For now, let them wrap or reduce gap/font size if needed */
-                gap: 1rem; /* Smaller gap on smaller screens */
+                gap: 1rem;
             }
             .navbar-links a {
-                font-size: 0.875rem; /* Slightly smaller font for nav links */
+                font-size: 0.875rem;
             }
             .navbar-button {
                 padding: 0.4rem 0.8rem;
                 font-size: 0.875rem;
             }
-            /* .mobile-menu-button {
-                display: block; 
-            } */
         }
-
 
         .animate-on-scroll {
             opacity: 0;
@@ -258,17 +230,13 @@
 
     <nav class="navbar">
         <div class="container">
-            <a href="#" class="navbar-brand">Mako Young</a>
+            <a href="/" class="navbar-brand">Mako Young</a>
             <div class="navbar-links">
-                <a href="#how-it-works">How it Works</a>
-                <a href="#benefits">Features</a>
-                <a href="#contact" class="navbar-button">Book Calls on Autopilot</a>
+                <a href="/#how-it-works">How it Works</a>
+                <a href="/#benefits">Features</a>
+                <a href="/url-opener.html">URL Opener</a>
+                <a href="/#contact" class="navbar-button">Book Calls on Autopilot</a>
             </div>
-            <!-- <button class="mobile-menu-button lg:hidden">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
-                </svg>
-            </button> -->
         </div>
     </nav>
 
