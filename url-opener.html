@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Safe URL Opener - Mako Young</title>
+    <title>Safe URL & Instagram Opener - Mako Young</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
@@ -96,6 +96,15 @@
             animation: shake 0.5s ease-in-out;
             border-color: #ef4444 !important; /* Red-500 */
         }
+        /* Custom "pill" style radio buttons */
+        .input-type-selector label span {
+            background-color: transparent;
+            color: #94a3b8; /* slate-400 */
+        }
+        .input-type-selector input:checked + span {
+            background-color: #2563eb; /* blue-600 */
+            color: white;
+        }
         
         @media (max-width: 1023px) {
             .navbar-links {
@@ -115,33 +124,46 @@
 
     <nav class="navbar">
         <div class="container">
-            <a href="/" class="navbar-brand">Mako Young</a>
+            <a href="index.html" class="navbar-brand">Mako Young</a>
             <div class="navbar-links">
-                <a href="/#how-it-works">How it Works</a>
-                <a href="/#benefits">Features</a>
-                <a href="/url-opener.html">URL Opener</a>
-                <a href="/#contact" class="navbar-button">Book Calls on Autopilot</a>
+                <a href="index.html#how-it-works">How it Works</a>
+                <a href="index.html#benefits">Features</a>
+                <a href="url-opener.html">URL Opener</a>
+                <a href="index.html#contact" class="navbar-button">Book Calls on Autopilot</a>
             </div>
         </div>
     </nav>
     
     <main class="flex items-center justify-center min-h-[calc(100vh-65px)] p-4">
         <div class="w-full max-w-5xl mx-auto">
-            <!-- Redesigned Tool Container -->
             <div class="bg-slate-900 border border-slate-800 rounded-lg shadow-lg p-6">
                 
                 <div class="text-center mb-6">
-                    <h1 class="text-2xl sm:text-3xl font-bold text-slate-50">Safe URL Opener</h1>
-                    <p class="text-slate-400 mt-2">A tool to open URLs safely and simulate human behavior.</p>
+                    <h1 class="text-2xl sm:text-3xl font-bold text-slate-50">Safe URL & IG Opener</h1>
+                    <p class="text-slate-400 mt-2">A tool to open URLs or Instagram profiles safely.</p>
                 </div>
 
                 <div class="space-y-6">
+                     <!-- Input Type Section -->
+                     <div>
+                        <label class="block text-sm font-medium text-slate-300 mb-2">Input Type</label>
+                        <div class="input-type-selector flex items-center space-x-2 bg-slate-800 p-1 rounded-md">
+                            <label for="type-url" class="w-full flex items-center justify-center cursor-pointer">
+                                <input type="radio" id="type-url" name="inputType" value="url" class="hidden" checked>
+                                <span class="w-full text-center px-3 py-1 text-sm font-semibold rounded-md transition-colors">Full URLs</span>
+                            </label>
+                            <label for="type-ig" class="w-full flex items-center justify-center cursor-pointer">
+                                <input type="radio" id="type-ig" name="inputType" value="instagram" class="hidden">
+                                <span class="w-full text-center px-3 py-1 text-sm font-semibold rounded-md transition-colors">Instagram Usernames</span>
+                            </label>
+                        </div>
+                    </div>
+                    
                     <!-- URL Input Section -->
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
-                            <!-- URL Label and Controls -->
                             <div class="flex justify-between items-center mb-2">
-                                <label for="urls" class="block text-sm font-medium text-slate-300">Paste URLs (one per line)</label>
+                                <label for="urls" id="input-label" class="block text-sm font-medium text-slate-300">Paste URLs (one per line)</label>
                                 <div class="flex items-center gap-2">
                                     <button id="shuffle-btn" title="Shuffle List" class="bg-slate-700 hover:bg-slate-600 text-slate-300 font-semibold p-2 rounded-md text-xl transition-colors">
                                         🔀
@@ -173,12 +195,10 @@
                         </div>
                     </div>
                     
-                    <!-- Estimate -->
                     <div class="bg-slate-800 rounded-md px-3 py-2 border border-slate-700">
                         <p id="estimate-time" class="text-sm text-slate-400 text-center"></p>
                     </div>
 
-                    <!-- Action Buttons -->
                     <div class="space-y-4">
                         <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
                              <button id="start-btn" class="navbar-button w-full justify-center !py-3">Start Opening</button>
@@ -189,25 +209,23 @@
                     </div>
                 </div>
 
-                <!-- Status and Report Area -->
                 <div id="status-container" class="mt-6 text-center p-4 bg-slate-800 border border-slate-700 rounded-md" style="display: none;">
                     <p id="status-message" class="text-slate-300 min-h-[24px]"></p>
                     <p id="countdown-timer" class="text-slate-400 text-sm min-h-[20px]"></p>
                     <div id="progress-bar-container" class="w-full bg-slate-700 rounded-full h-2.5 mt-2" style="display:none;">
                         <div id="progress-bar" class="bg-blue-600 h-2.5 rounded-full" style="width: 0%; transition: width 0.5s ease-in-out;"></div>
                     </div>
-                    <!-- Final Report Section -->
                     <div id="report-container" class="mt-4 text-left" style="display: none;">
                         <h3 class="text-lg font-semibold text-white mb-2">Completion Report</h3>
                         <pre id="report-output" class="text-sm bg-slate-900 border border-slate-700 rounded-md p-4 max-h-48 overflow-y-auto text-slate-400"></pre>
                     </div>
                 </div>
 
-                <!-- Guide Section -->
                 <div class="mt-8 pt-6 border-t border-slate-700 text-left text-slate-400 text-sm space-y-4">
                     <h3 class="text-lg font-semibold text-white">How It Works</h3>
-                    <p><strong>Safe URL Opener:</strong> This tool opens a list of URLs in new tabs with a random delay between each one. This helps avoid getting flagged by websites for bot-like activity.</p>
-                    <p><strong>Shuffle List:</strong> This button randomizes the order of your URLs. This adds an extra layer of security by ensuring the links are not opened in a predictable sequence, making the activity appear more human.</p>
+                    <p><strong>Input Type:</strong> Choose 'Full URLs' to open complete web addresses, or 'Instagram Usernames' to automatically open profiles from a list of usernames.</p>
+                    <p><strong>Safe URL Opener:</strong> This tool opens a list of items in new tabs with a random delay between each one. This helps avoid getting flagged by websites for bot-like activity.</p>
+                    <p><strong>Shuffle List:</strong> This button randomizes the order of your list. This adds an extra layer of security by ensuring the links are not opened in a predictable sequence, making the activity appear more human.</p>
                     <p><strong>Quick Start:</strong> This button instantly opens two websites. Its main purpose is to trigger your browser's pop-up permission request right away so you can enable it for this tool without waiting for the normal delay.</p>
                 </div>
             </div>
@@ -235,6 +253,8 @@
         const shufflePreviewTextarea = document.getElementById('shuffled-urls-preview');
         const reportContainer = document.getElementById('report-container');
         const reportOutput = document.getElementById('report-output');
+        const inputTypeRadios = document.querySelectorAll('input[name="inputType"]');
+        const inputLabel = document.getElementById('input-label');
 
         // --- State Variables ---
         let stopProcess = false;
@@ -250,10 +270,21 @@
             clearButton.disabled = false;
             pauseButton.disabled = true;
             stopButton.disabled = true;
-
             shufflePreviewContainer.style.display = 'none';
             reportContainer.style.display = 'none';
+            updateInputTypeUI();
             updateEstimate();
+        }
+        
+        function updateInputTypeUI() {
+            const selectedType = document.querySelector('input[name="inputType"]:checked').value;
+            if (selectedType === 'instagram') {
+                inputLabel.textContent = 'Paste Usernames (one per line)';
+                urlTextArea.placeholder = 'makoyoung\nexample_user';
+            } else {
+                inputLabel.textContent = 'Paste URLs (one per line)';
+                urlTextArea.placeholder = 'google.com\ngithub.com';
+            }
         }
 
         function updateEstimate() {
@@ -355,14 +386,19 @@
         }
 
         async function startProcessing() {
+            const selectedType = document.querySelector('input[name="inputType"]:checked').value;
             let urls = urlTextArea.value.split('\n')
-                .map(url => url.trim())
-                .filter(url => url && !url.startsWith('#'))
-                .map(url => {
-                    if (url.startsWith('http://') || url.startsWith('https://')) {
-                        return url;
+                .map(item => item.trim())
+                .filter(item => item && !item.startsWith('#'))
+                .map(item => {
+                    if (selectedType === 'instagram') {
+                        return `https://www.instagram.com/${item}`;
                     }
-                    return `https://${url}`;
+                    // Handle 'url' type
+                    if (item.startsWith('http://') || item.startsWith('https://')) {
+                        return item;
+                    }
+                    return `https://${item}`;
                 });
             
             const minDelay = parseFloat(minDelayInput.value);
@@ -372,7 +408,7 @@
             reportContainer.style.display = 'none';
 
             if (urls.length === 0) {
-                statusMessage.textContent = "Please provide at least one URL.";
+                statusMessage.textContent = "Please provide at least one item.";
                 return;
             }
             if (isNaN(minDelay) || isNaN(maxDelay) || minDelay < 0 || maxDelay < 0) {
@@ -411,13 +447,12 @@
             for (let i = 0; i < urls.length; i++) {
                 let delaySeconds = 0;
 
-                // Handle delay for all but the first item
                 if (i > 0) {
                     delaySeconds = Math.random() * (maxDelay - minDelay) + minDelay;
                     delayLog.push(`Waited ${delaySeconds.toFixed(1)}s`);
                     
                     let timeWaited = 0;
-                    const waitInterval = 100; // Check every 100ms
+                    const waitInterval = 100;
                     
                     startCountdown(delaySeconds);
 
@@ -427,7 +462,7 @@
                            await sleep(waitInterval);
                            timeWaited += waitInterval;
                         } else {
-                           await sleep(waitInterval); // still sleep while paused to prevent busy-looping
+                           await sleep(waitInterval);
                         }
                     }
                 }
@@ -439,7 +474,7 @@
                 
                 const url = urls[i];
                 progressBar.style.width = `${((i + 1) / urls.length) * 100}%`;
-                statusMessage.textContent = `Opening URL ${i + 1} of ${urls.length}: ${url}`;
+                statusMessage.textContent = `Opening item ${i + 1} of ${urls.length}: ${url.replace('https://','')}`;
                 
                 window.open(url, '_blank');
             }
@@ -448,12 +483,12 @@
             countdownTimer.textContent = '';
 
             if (!stopProcess) {
-                statusMessage.textContent = `Done! All ${urls.length} URLs have been opened.`;
+                statusMessage.textContent = `Done! All ${urls.length} items have been processed.`;
                 
                 const totalDurationSeconds = ((Date.now() - processStartTime) / 1000).toFixed(1);
                 let reportContent = 'Delay between tabs:\n';
                 reportContent += '---------------------\n';
-                reportContent += delayLog.join('\n') || 'N/A (only one URL)';
+                reportContent += delayLog.join('\n') || 'N/A (only one item)';
                 reportContent += `\n\n---------------------\n`;
                 reportContent += `Total task time: ${totalDurationSeconds}s`;
 
@@ -484,6 +519,7 @@
         urlTextArea.addEventListener('input', updateEstimate);
         minDelayInput.addEventListener('input', updateEstimate);
         maxDelayInput.addEventListener('input', updateEstimate);
+        inputTypeRadios.forEach(radio => radio.addEventListener('change', updateInputTypeUI));
         
         document.addEventListener('DOMContentLoaded', initializeUI);
     </script>
