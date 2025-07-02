@@ -223,8 +223,8 @@
 
                 <div class="mt-8 pt-6 border-t border-slate-700 text-left text-slate-400 text-sm space-y-4">
                     <h3 class="text-lg font-semibold text-white">How It Works</h3>
+                    <p><strong>Background Processing:</strong> This tool uses a Web Worker to run the timer in the background. This means it will continue to open new tabs even if you switch to another window or tab.</p>
                     <p><strong>Input Type:</strong> Choose 'Full URLs' to open complete web addresses, or 'Instagram Usernames' to automatically open profiles from a list of usernames.</p>
-                    <p><strong>Safe URL Opener:</strong> This tool opens a list of items in new tabs with a random delay between each one. This helps avoid getting flagged by websites for bot-like activity.</p>
                     <p><strong>Shuffle List:</strong> This button randomizes the order of your list. This adds an extra layer of security by ensuring the links are not opened in a predictable sequence, making the activity appear more human.</p>
                     <p><strong>Quick Start:</strong> This button instantly opens two websites. Its main purpose is to trigger your browser's pop-up permission request right away so you can enable it for this tool without waiting for the normal delay.</p>
                 </div>
@@ -257,21 +257,92 @@
         const inputLabel = document.getElementById('input-label');
 
         // --- State Variables ---
-        let stopProcess = false;
         let isPaused = false;
+        let urlWorker;
         let countdownInterval;
 
-        // --- Core Functions ---
-        const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+        // --- Web Worker Code as a String ---
+        const workerScript = `
+            let stopProcess = false;
+            let isPaused = false;
+            let urls = [];
+            let minDelay = 0;
+            let maxDelay = 0;
+            let delayLog = [];
 
+            const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+
+            self.onmessage = async function(e) {
+                const { command, data } = e.data;
+
+                switch (command) {
+                    case 'start':
+                        urls = data.urls;
+                        minDelay = data.minDelay;
+                        maxDelay = data.maxDelay;
+                        stopProcess = false;
+                        isPaused = false;
+                        delayLog = [];
+                        await processUrls();
+                        break;
+                    case 'stop':
+                        stopProcess = true;
+                        break;
+                    case 'pause':
+                        isPaused = true;
+                        break;
+                    case 'resume':
+                        isPaused = false;
+                        break;
+                }
+            };
+
+            async function processUrls() {
+                const processStartTime = Date.now();
+                for (let i = 0; i < urls.length; i++) {
+                    if (stopProcess) {
+                        self.postMessage({ type: 'status', message: 'Process stopped by user.' });
+                        break;
+                    }
+
+                    while (isPaused) {
+                        if (stopProcess) break;
+                        await sleep(200);
+                    }
+                    if (stopProcess) break;
+
+                    self.postMessage({ type: 'open', url: urls[i], index: i, total: urls.length });
+
+                    if (i < urls.length - 1) {
+                        const delaySeconds = Math.random() * (maxDelay - minDelay) + minDelay;
+                        delayLog.push('Waited ' + delaySeconds.toFixed(1) + 's');
+                        self.postMessage({ type: 'delay', seconds: delaySeconds });
+                        await sleep(delaySeconds * 1000);
+                    }
+                }
+
+                if (!stopProcess) {
+                    const totalDurationSeconds = ((Date.now() - processStartTime) / 1000).toFixed(1);
+                    self.postMessage({ type: 'done', total: urls.length, duration: totalDurationSeconds, log: delayLog });
+                }
+                self.close();
+            }
+        `;
+
+        // --- Core Functions ---
         function initializeUI() {
             startButton.disabled = false;
             shuffleButton.disabled = false;
             clearButton.disabled = false;
             pauseButton.disabled = true;
             stopButton.disabled = true;
+            pauseButton.textContent = 'Pause';
             shufflePreviewContainer.style.display = 'none';
             reportContainer.style.display = 'none';
+            progressBar.style.width = '0%';
+            statusMessage.textContent = '';
+            countdownTimer.textContent = '';
+            statusContainer.style.display = 'none';
             updateInputTypeUI();
             updateEstimate();
         }
@@ -318,15 +389,10 @@
 
         function startCountdown(secondsRemaining) {
             if (countdownInterval) clearInterval(countdownInterval);
-            statusMessage.textContent = `Waiting for ${secondsRemaining.toFixed(1)} seconds...`;
             const startTime = Date.now();
             const totalDurationMs = secondsRemaining * 1000;
 
             countdownInterval = setInterval(() => {
-                if (isPaused) {
-                    clearInterval(countdownInterval);
-                    return;
-                }
                 const elapsedMs = Date.now() - startTime;
                 const remainingMs = totalDurationMs - elapsedMs;
                 if (remainingMs > 0) {
@@ -342,10 +408,9 @@
             shufflePreviewContainer.style.display = 'block';
             shufflePreviewTextarea.value = '';
             for (const url of urls) {
-                if (stopProcess) break;
                 shufflePreviewTextarea.value += url + '\n';
                 shufflePreviewTextarea.scrollTop = shufflePreviewTextarea.scrollHeight;
-                await sleep(50);
+                await new Promise(resolve => setTimeout(resolve, 50));
             }
         }
 
@@ -374,18 +439,18 @@
         function togglePause() {
             isPaused = !isPaused;
             if (isPaused) {
+                urlWorker.postMessage({ command: 'pause' });
                 pauseButton.textContent = 'Resume';
                 statusMessage.textContent = 'Paused. Click Resume to continue.';
-                if (countdownInterval) {
-                     clearInterval(countdownInterval); // Stop visual countdown
-                }
+                if (countdownInterval) clearInterval(countdownInterval);
             } else {
+                urlWorker.postMessage({ command: 'resume' });
                 pauseButton.textContent = 'Pause';
                 statusMessage.textContent = 'Resuming...';
             }
         }
 
-        async function startProcessing() {
+        function startProcessing() {
             const selectedType = document.querySelector('input[name="inputType"]:checked').value;
             let urls = urlTextArea.value.split('\n')
                 .map(item => item.trim())
@@ -394,7 +459,6 @@
                     if (selectedType === 'instagram') {
                         return `https://www.instagram.com/${item}`;
                     }
-                    // Handle 'url' type
                     if (item.startsWith('http://') || item.startsWith('https://')) {
                         return item;
                     }
@@ -411,12 +475,8 @@
                 statusMessage.textContent = "Please provide at least one item.";
                 return;
             }
-            if (isNaN(minDelay) || isNaN(maxDelay) || minDelay < 0 || maxDelay < 0) {
-                statusMessage.textContent = "Please provide valid, non-negative numbers for delays.";
-                return;
-            }
-            if (minDelay > maxDelay) {
-                statusMessage.textContent = "Minimum delay cannot be greater than maximum delay.";
+            if (isNaN(minDelay) || isNaN(maxDelay) || minDelay < 0 || maxDelay < 0 || minDelay > maxDelay) {
+                statusMessage.textContent = "Please provide valid delays. Min cannot be greater than Max.";
                 minDelayInput.classList.add('error-shake');
                 maxDelayInput.classList.add('error-shake');
                 setTimeout(() => {
@@ -426,86 +486,64 @@
                 return;
             }
 
-            stopProcess = false;
             isPaused = false;
             startButton.disabled = true;
             shuffleButton.disabled = true;
             clearButton.disabled = true;
             pauseButton.disabled = false;
             stopButton.disabled = false;
-            pauseButton.textContent = 'Pause';
             
             shufflePreviewContainer.style.display = 'none';
             progressBarContainer.style.display = 'block';
-            progressBar.style.width = '0%';
             statusMessage.textContent = 'Starting process...';
-            countdownTimer.textContent = '';
-            
-            const processStartTime = Date.now();
-            const delayLog = [];
 
-            for (let i = 0; i < urls.length; i++) {
-                let delaySeconds = 0;
+            const blob = new Blob([workerScript], { type: 'application/javascript' });
+            urlWorker = new Worker(URL.createObjectURL(blob));
 
-                if (i > 0) {
-                    delaySeconds = Math.random() * (maxDelay - minDelay) + minDelay;
-                    delayLog.push(`Waited ${delaySeconds.toFixed(1)}s`);
-                    
-                    let timeWaited = 0;
-                    const waitInterval = 100;
-                    
-                    startCountdown(delaySeconds);
-
-                    while (timeWaited < delaySeconds * 1000) {
-                        if (stopProcess) break;
-                        if (!isPaused) {
-                           await sleep(waitInterval);
-                           timeWaited += waitInterval;
-                        } else {
-                           await sleep(waitInterval);
-                        }
-                    }
+            urlWorker.onmessage = function(e) {
+                const { type, url, index, total, seconds, message, duration, log } = e.data;
+                switch(type) {
+                    case 'open':
+                        progressBar.style.width = `${((index + 1) / total) * 100}%`;
+                        statusMessage.textContent = `Opening item ${index + 1} of ${total}: ${url.replace('https://','')}`;
+                        window.open(url, '_blank');
+                        break;
+                    case 'delay':
+                        startCountdown(seconds);
+                        break;
+                    case 'status':
+                        statusMessage.textContent = message;
+                        break;
+                    case 'done':
+                        statusMessage.textContent = `Done! All ${total} items have been processed.`;
+                        if (countdownInterval) clearInterval(countdownInterval);
+                        countdownTimer.textContent = '';
+                        
+                        let reportContent = 'Delay between tabs:\n---------------------\n';
+                        reportContent += log.join('\n') || 'N/A (only one item)';
+                        reportContent += `\n\n---------------------\nTotal task time: ${duration}s`;
+                        reportOutput.textContent = reportContent;
+                        reportContainer.style.display = 'block';
+                        
+                        initializeUI();
+                        urlWorker.terminate();
+                        break;
                 }
-
-                if (stopProcess) {
-                    statusMessage.textContent = 'Process stopped by user.';
-                    break;
-                }
-                
-                const url = urls[i];
-                progressBar.style.width = `${((i + 1) / urls.length) * 100}%`;
-                statusMessage.textContent = `Opening item ${i + 1} of ${urls.length}: ${url.replace('https://','')}`;
-                
-                window.open(url, '_blank');
-            }
-
-            if (countdownInterval) clearInterval(countdownInterval);
-            countdownTimer.textContent = '';
-
-            if (!stopProcess) {
-                statusMessage.textContent = `Done! All ${urls.length} items have been processed.`;
-                
-                const totalDurationSeconds = ((Date.now() - processStartTime) / 1000).toFixed(1);
-                let reportContent = 'Delay between tabs:\n';
-                reportContent += '---------------------\n';
-                reportContent += delayLog.join('\n') || 'N/A (only one item)';
-                reportContent += `\n\n---------------------\n`;
-                reportContent += `Total task time: ${totalDurationSeconds}s`;
-
-                reportOutput.textContent = reportContent;
-                reportContainer.style.display = 'block';
-            }
+            };
             
-            initializeUI();
+            urlWorker.postMessage({
+                command: 'start',
+                data: { urls, minDelay, maxDelay }
+            });
         }
 
         function stopProcessing() {
-            stopProcess = true;
-            isPaused = false;
+            if (urlWorker) {
+                urlWorker.postMessage({ command: 'stop' });
+                urlWorker.terminate();
+            }
             if (countdownInterval) clearInterval(countdownInterval);
-            countdownTimer.textContent = '';
             statusMessage.textContent = 'Process stopped by user.';
-            
             initializeUI();
         }
 
