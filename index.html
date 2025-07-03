@@ -142,8 +142,8 @@
             color: #111827;
         }
         .subsection-title {
-            font-size: 1.75rem; /* Larger */
-            font-weight: 700;
+            font-size: 1.25rem; /* Adjusted for card layout */
+            font-weight: 600;
             margin-bottom: 1rem;
             color: #1f2937;
         }
@@ -176,27 +176,6 @@
             margin-bottom: 1.5rem;
             box-shadow: 0 4px 10px rgba(59, 130, 246, 0.2);
         }
-        
-        /* Asymmetrical layout for steps */
-        .step-item {
-            max-width: 50%; /* Each step takes up half the width */
-        }
-        .step-item.align-left {
-            margin-right: auto; /* Pushes item to the left */
-            margin-left: 0;
-        }
-        .step-item.align-right {
-            margin-left: auto; /* Pushes item to the right */
-            margin-right: 0;
-        }
-        @media (max-width: 767px) {
-            .step-item {
-                max-width: 100%; /* Full width on mobile */
-                margin-left: auto;
-                margin-right: auto;
-            }
-        }
-
 
         p, li span {
             font-size: 1rem;
@@ -253,8 +232,8 @@
             opacity: 1;
             transform: translateY(0);
         }
-        .animate-on-scroll.is-visible .card, .animate-on-scroll.is-visible .step-item {
-            transition-delay: calc(0.15s * var(--item-index, 0));
+        .animate-on-scroll.is-visible .card {
+            transition-delay: calc(0.1s * var(--item-index, 0));
         }
     </style>
 </head>
@@ -266,6 +245,7 @@
             <div class="navbar-links">
                 <a href="#how-it-works">How it Works</a>
                 <a href="#benefits">Features</a>
+                <a href="url-opener.html">URL Opener</a>
                 <a href="#contact" class="navbar-button">Book Calls on Autopilot</a>
             </div>
         </div>
@@ -284,33 +264,33 @@
     <section id="how-it-works" class="py-20 md:py-32">
         <div class="container mx-auto px-6">
             <h2 class="section-title animate-on-scroll">How We Secure Your Sales Calls</h2>
-            <div class="space-y-16 md:space-y-24 mt-16">
-                <!-- Step 1 -->
-                <div class="step-item align-left animate-on-scroll" style="--item-index: 1;">
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mt-12">
+                <!-- Step 1 Card -->
+                <div class="card animate-on-scroll" style="--item-index: 1;">
                     <div class="step-number">1</div>
                     <h3 class="subsection-title">Identifying Potential Clients</h3>
                     <p>We search Instagram for individuals who are likely interested in what you offer. We analyze their profile content, hashtags used, and followed accounts.</p>
                 </div>
-                <!-- Step 2 -->
-                <div class="step-item align-right animate-on-scroll" style="--item-index: 2;">
+                <!-- Step 2 Card -->
+                <div class="card animate-on-scroll" style="--item-index: 2;">
                     <div class="step-number">2</div>
                     <h3 class="subsection-title">Initiating Conversations</h3>
                     <p>Using established Instagram accounts, we send approximately 4,000 targeted messages monthly. This connects you with a steady stream of prospects.</p>
                 </div>
-                <!-- Step 3 -->
-                <div class="step-item align-left animate-on-scroll" style="--item-index: 3;">
+                <!-- Step 3 Card -->
+                <div class="card animate-on-scroll" style="--item-index: 3;">
                     <div class="step-number">3</div>
                     <h3 class="subsection-title">Qualifying Interested Leads</h3>
                     <p>Our team engages in real conversations with everyone who responds. We carefully assess if their needs align with your services.</p>
                 </div>
-                <!-- Step 4 -->
-                <div class="step-item align-right animate-on-scroll" style="--item-index: 4;">
+                <!-- Step 4 Card -->
+                <div class="card animate-on-scroll lg:col-start-1 lg:col-end-3" style="--item-index: 4;">
                     <div class="step-number">4</div>
                     <h3 class="subsection-title">Presenting Your Value</h3>
                     <p>We explain the benefits of your business to potential clients. We answer their initial questions to prepare them for a productive sales call.</p>
                 </div>
-                <!-- Step 5 -->
-                <div class="step-item align-left animate-on-scroll" style="--item-index: 5;">
+                <!-- Step 5 Card -->
+                <div class="card animate-on-scroll" style="--item-index: 5;">
                     <div class="step-number">5</div>
                     <h3 class="subsection-title">Scheduling the Appointment</h3>
                     <p>Finally, we book the sales call directly into your calendar. You can then connect with an informed and interested individual.</p>
@@ -417,3 +397,4 @@
     <script type="text/javascript">window.onload = function() { Calendly.initBadgeWidget({ url: 'https://calendly.com/mako-young0/introductory-call', text: 'Schedule time with me', color: '#2563eb', textColor: '#ffffff', branding: undefined }); }</script>
 </body>
 </html>
+```
