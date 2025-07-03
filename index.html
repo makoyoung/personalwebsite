@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Instagram Lead Generation - Mako Young</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link href="https://assets.calendly.com/assets/external/widget.css" rel="stylesheet">
     <style>
         html {
@@ -15,348 +15,357 @@
             font-family: 'Inter', sans-serif;
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
-            background-color: #020617; /* Nearly black - slate-950 */
-            color: #e2e8f0; /* Default light text - slate-200 */
+            background-color: #f9fafb; /* Off-white - gray-50 */
+            color: #1f2937; /* Dark gray text - gray-800 */
             overflow-x: hidden;
         }
         /* Navbar Styles */
         .navbar {
-            background-color: #0f172a; /* slate-900, slightly lighter than body for definition */
-            padding: 1rem 1.5rem; /* py-4 px-6 */
-            border-bottom: 1px solid #1e293b; /* slate-800 */
+            background-color: rgba(255, 255, 255, 0.7); /* Increased transparency */
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid #e5e7eb; /* gray-200 */
             position: sticky;
             top: 0;
             z-index: 50;
+            transition: box-shadow 0.3s ease;
+        }
+        .navbar.scrolled {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
         }
         .navbar .container {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            max-width: 1280px; /* xl */
+            max-width: 1280px;
             margin-left: auto;
             margin-right: auto;
         }
         .navbar-brand {
-            font-size: 1.25rem; /* text-xl */
-            font-weight: 700; /* bold */
-            color: #f8fafc; /* slate-50 */
+            font-size: 1.25rem;
+            font-weight: 700; /* Bolder */
+            color: #111827; /* gray-900 */
             text-decoration: none;
         }
         .navbar-links {
             display: flex;
             align-items: center;
-            gap: 1.5rem; /* gap-6 */
+            gap: 1.5rem;
         }
         .navbar-links a {
-            color: #cbd5e1; /* slate-300 */
+            color: #4b5563; /* gray-600 */
             text-decoration: none;
-            font-weight: 500; /* medium */
+            font-weight: 500;
             transition: color 0.3s ease;
         }
         .navbar-links a:hover {
-            color: #f8fafc; /* slate-50 */
+            color: #1d4ed8; /* blue-700 */
         }
         .navbar-button {
-            padding: 0.5rem 1rem; /* py-2 px-4 */
-            font-weight: 600; /* semibold */
-            border-radius: 0.375rem; /* rounded-md */
+            padding: 0.625rem 1.25rem; /* py-2.5 px-5 */
+            font-weight: 600;
+            border-radius: 0.5rem; /* rounded-lg */
             background-color: #2563eb; /* blue-600 */
-            color: white;
-            transition: background-color 0.3s ease, transform 0.2s ease;
-            box-shadow: 0 0 8px 1px rgba(59, 130, 246, 0.3);
+            color: #ffffff !important; /* FIX: Ensure text is white */
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(37, 99, 235, 0.1), 0 1px 3px rgba(0,0,0,0.08);
             text-decoration: none;
         }
         .navbar-button:hover {
             background-color: #1d4ed8; /* blue-700 */
-            transform: translateY(-1px);
-            box-shadow: 0 0 12px 3px rgba(59, 130, 246, 0.4);
+            transform: translateY(-2px);
+            box-shadow: 0 7px 14px rgba(37, 99, 235, 0.1), 0 3px 6px rgba(0,0,0,0.08);
         }
+
         .hero-section {
-            background: linear-gradient(180deg, #020617 0%, #0f172a 50%, #020617 100%);
-            padding-bottom: 4rem; 
+            padding: 8rem 1.5rem; /* Increased padding */
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            background-image: radial-gradient(#e5e7eb 1px, transparent 1px);
+            background-size: 2rem 2rem;
+        }
+        .hero-section::before { /* Abstract background shape */
+            content: '';
+            position: absolute;
+            top: -20%;
+            left: -10%;
+            width: 50vw;
+            height: 50vw;
+            background: radial-gradient(circle, rgba(59, 130, 246, 0.1) 0%, rgba(59, 130, 246, 0) 70%);
+            z-index: 0;
         }
         #hero h1 {
-             font-size: 3rem;
-             line-height: 1.2;
-             font-weight: 800;
-             letter-spacing: -0.025em;
-             color: #f8fafc;
+             font-size: 3.25rem;
+             line-height: 1.15;
+             font-weight: 800; /* Bolder for more impact */
+             letter-spacing: -0.035em;
+             color: #111827;
              margin-bottom: 1.5rem;
+             max-width: 800px;
+             margin-left: auto;
+             margin-right: auto;
         }
         #hero p {
-            color: #cbd5e1;
-            font-size: 1.125rem;
+            color: #4b5563;
+            font-size: 1.25rem; /* Slightly larger */
             margin-bottom: 2.5rem;
-        }
-        .section-title {
-            font-size: 2.25rem;
-            font-weight: 700;
-            margin-bottom: 3rem;
-            text-align: center;
-            letter-spacing: -0.02em;
-            color: #f8fafc;
-        }
-        .subsection-title {
-            font-size: 1.25rem;
-            font-weight: 600;
-            margin-bottom: 0.75rem;
-            color: #e2e8f0;
+            max-width: 650px;
+            margin-left: auto;
+            margin-right: auto;
+            line-height: 1.6;
         }
         .cta-button { /* Main CTA button in hero */
             display: inline-block;
-            padding: 0.875rem 2rem;
+            padding: 1rem 2.5rem; /* Larger button */
+            font-size: 1.125rem;
             font-weight: 600;
             border-radius: 0.5rem;
             text-decoration: none;
-            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            transition: all 0.3s ease;
             background-color: #2563eb;
             color: white;
-            border: 1px solid #2563eb;
-            box-shadow: 0 0 10px 2px rgba(59, 130, 246, 0.4),
-                        0 0 20px 5px rgba(59, 130, 246, 0.2);
+            box-shadow: 0 4px 15px rgba(37, 99, 235, 0.2);
         }
         .cta-button:hover {
-            background-color: #1d4ed8;
-            border-color: #1d4ed8;
-            transform: translateY(-3px) scale(1.03);
-            box-shadow: 0 0 15px 5px rgba(59, 130, 246, 0.5),
-                        0 0 30px 10px rgba(59, 130, 246, 0.3);
+            transform: translateY(-3px);
+            box-shadow: 0 7px 20px rgba(37, 99, 235, 0.25);
         }
+
+        .section-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 4rem; /* More space */
+            text-align: center;
+            letter-spacing: -0.025em;
+            color: #111827;
+        }
+        .subsection-title {
+            font-size: 1.75rem; /* Larger */
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: #1f2937;
+        }
+        
         .card {
-            background-color: #0f172a;
-            border-radius: 0.75rem;
-            padding: 2rem;
-            border: 1px solid #1e293b;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1),
-                        inset 0 0 10px rgba(59, 130, 246, 0.1);
-            transition: transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1), box-shadow 0.4s cubic-bezier(0.25, 0.8, 0.25, 1), border-color 0.4s;
-            display: flex;
-            flex-direction: column;
+            background-color: #ffffff;
+            border-radius: 1rem; /* Softer radius */
+            padding: 2.5rem;
+            border: 1px solid #e5e7eb; /* gray-200 */
+            box-shadow: 0 4px 12px rgba(0,0,0,0.04);
+            transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+            height: 100%; /* Make cards in a row equal height */
         }
         .card:hover {
             transform: translateY(-8px);
-            border-color: #2563eb;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.2),
-                        inset 0 0 15px rgba(59, 130, 246, 0.2),
-                        0 0 20px 5px rgba(59, 130, 246, 0.2);
+            border-color: #bfdbfe; /* blue-200 */
+            box-shadow: 0 12px 24px rgba(0,0,0,0.08);
         }
         .step-number {
-            background-color: #2563eb;
+            background: linear-gradient(135deg, #3b82f6, #60a5fa);
             color: white;
             border-radius: 9999px;
-            width: 2.75rem;
-            height: 2.75rem;
+            width: 3rem;
+            height: 3rem;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.125rem;
+            font-size: 1.25rem;
             font-weight: 700;
-            margin-right: 1rem;
-            flex-shrink: 0;
-            box-shadow: 0 0 8px rgba(59, 130, 246, 0.5);
+            margin-bottom: 1.5rem;
+            box-shadow: 0 4px 10px rgba(59, 130, 246, 0.2);
+        }
+        
+        /* Asymmetrical layout for steps */
+        .step-item {
+            max-width: 50%; /* Each step takes up half the width */
+        }
+        .step-item.align-left {
+            margin-right: auto; /* Pushes item to the left */
+            margin-left: 0;
+        }
+        .step-item.align-right {
+            margin-left: auto; /* Pushes item to the right */
+            margin-right: 0;
+        }
+        @media (max-width: 767px) {
+            .step-item {
+                max-width: 100%; /* Full width on mobile */
+                margin-left: auto;
+                margin-right: auto;
+            }
         }
 
+
         p, li span {
-            font-family: 'Inter', sans-serif;
             font-size: 1rem;
             line-height: 1.7;
-            color: #94a3b8;
+            color: #4b5563; /* gray-600 */
         }
         #who-is-this-for .card {
-             background-color: #1e293b;
-        }
-        #who-is-this-for .card .subsection-title, #who-is-this-for .card span {
-            color: #e2e8f0;
+             background: linear-gradient(135deg, #ffffff, #f9fafb);
+             border: 1px solid #dbeafe; /* blue-200 */
         }
         #who-is-this-for .card svg {
-            color: #3b82f6;
+            color: #2563eb;
         }
 
         #contact {
-             background: #020617;
+             background-color: #f3f4f6; /* gray-100 */
         }
         #contact h2 {
-            color: #f8fafc;
+            color: #111827;
         }
         #contact p {
-            color: #cbd5e1;
+            color: #374155;
         }
         .calendly-inline-widget {
-            border-radius: 0.5rem;
+            border-radius: 0.75rem;
             overflow: hidden;
+            border: 1px solid #d1d5db; /* gray-300 */
         }
         
         @media (min-width: 768px) {
             #hero h1 {
-                font-size: 3.75rem;
+                font-size: 4rem;
             }
             .section-title {
-                font-size: 2.75rem;
+                font-size: 3rem;
             }
         }
-        @media (min-width: 1024px) {
-            #hero h1 {
-                font-size: 4.25rem;
-            }
-        }
-         @media (max-width: 1023px) {
+        @media (max-width: 767px) {
             .navbar-links {
-                gap: 1rem;
+                display: none; /* Hide links on mobile for simplicity */
             }
-            .navbar-links a {
-                font-size: 0.875rem;
-            }
-            .navbar-button {
-                padding: 0.4rem 0.8rem;
-                font-size: 0.875rem;
+            .navbar-brand {
+                flex-grow: 1;
+                text-align: center;
             }
         }
 
         .animate-on-scroll {
             opacity: 0;
             transform: translateY(40px);
-            transition: opacity 0.7s cubic-bezier(0.25, 0.8, 0.25, 1), transform 0.7s cubic-bezier(0.25, 0.8, 0.25, 1);
+            transition: opacity 0.8s cubic-bezier(0.165, 0.84, 0.44, 1), transform 0.8s cubic-bezier(0.165, 0.84, 0.44, 1);
         }
         .animate-on-scroll.is-visible {
             opacity: 1;
             transform: translateY(0);
         }
-        .animate-on-scroll.is-visible .card {
-            transition-delay: calc(0.15s * var(--card-index, 0));
+        .animate-on-scroll.is-visible .card, .animate-on-scroll.is-visible .step-item {
+            transition-delay: calc(0.15s * var(--item-index, 0));
         }
     </style>
 </head>
-<body class="bg-slate-950 text-slate-200">
+<body class="bg-gray-50">
 
-    <nav class="navbar">
-        <div class="container">
-            <a href="/" class="navbar-brand">Mako Young</a>
+    <nav class="navbar" id="navbar">
+        <div class="container mx-auto px-6">
+            <a href="#" class="navbar-brand">Mako Young</a>
             <div class="navbar-links">
-                <a href="/#how-it-works">How it Works</a>
-                <a href="/#benefits">Features</a>
-                <a href="/url-opener.html">URL Opener</a>
-                <a href="/#contact" class="navbar-button">Book Calls on Autopilot</a>
+                <a href="#how-it-works">How it Works</a>
+                <a href="#benefits">Features</a>
+                <a href="#contact" class="navbar-button">Book Calls on Autopilot</a>
             </div>
         </div>
     </nav>
 
-    <section id="hero" class="hero-section text-white py-16 md:py-24">
-        <div class="container mx-auto px-6 text-center">
-            <div class="animate-on-scroll">
-                <h1 class="font-extrabold mb-6 leading-tight text-glow-white">
-                    We Find, Chat, & Book Qualified Sales Calls Directly to Your Calendar.
-                </h1>
-                <p class="text-lg md:text-xl my-10 max-w-2xl mx-auto"> We find people on Instagram who are interested in your services and book sales calls into your calendar. This lets you focus on growing your business.
-                </p>
-                <a href="#contact" class="cta-button text-lg">
-                    Schedule Your Call
-                </a>
-            </div>
-        </div>
-    </section>
-
-    <section id="how-it-works" class="py-16 md:py-24">
+    <section id="hero" class="hero-section">
         <div class="container mx-auto px-6">
-            <h2 class="section-title animate-on-scroll text-glow-blue">How We Secure Your Sales Calls</h2>
-            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mt-12">
-                <div class="card animate-on-scroll" style="--card-index: 1;">
-                    <div class="flex items-start mb-4">
-                        <div class="step-number">1</div>
-                        <h3 class="subsection-title mt-1">Identifying Potential Clients</h3>
-                    </div>
-                    <p>
-                        We search Instagram for individuals who are likely interested in what you offer. We analyze their profile content, hashtags used, and followed accounts.
-                    </p>
-                </div>
-                <div class="card animate-on-scroll" style="--card-index: 2;">
-                    <div class="flex items-start mb-4">
-                        <div class="step-number">2</div>
-                        <h3 class="subsection-title mt-1">Initiating Conversations</h3>
-                    </div>
-                    <p>
-                        Using established Instagram accounts, we send approximately 300 targeted messages daily. This amounts to around 9,000 messages per month to connect with prospects.
-                    </p>
-                </div>
-                <div class="card animate-on-scroll" style="--card-index: 3;">
-                    <div class="flex items-start mb-4">
-                        <div class="step-number">3</div>
-                        <h3 class="subsection-title mt-1">Qualifying Interested Leads</h3>
-                    </div>
-                    <p>
-                        Our team engages in real conversations with everyone who responds. We carefully assess if their needs align with your services.
-                    </p>
-                </div>
-                <div class="card animate-on-scroll" style="--card-index: 4;">
-                    <div class="flex items-start mb-4">
-                        <div class="step-number">4</div>
-                        <h3 class="subsection-title mt-1">Presenting Your Value</h3>
-                    </div>
-                    <p>
-                        We explain the benefits of your business to potential clients. We answer their initial questions to prepare them for a productive sales call.
-                    </p>
-                </div>
-                <div class="card animate-on-scroll" style="--card-index: 5;">
-                    <div class="flex items-start mb-4">
-                        <div class="step-number">5</div>
-                        <h3 class="subsection-title mt-1">Scheduling the Appointment</h3>
-                    </div>
-                    <p>
-                        Finally, we book the sales call directly into your calendar. You can then connect with an informed and interested individual.
-                    </p>
-                </div>
-                <div class="hidden lg:block"></div> 
+            <div class="animate-on-scroll">
+                <h1>We Find, Chat, & Book Qualified Sales Calls Directly to Your Calendar.</h1>
+                <p>We'll send 4,000 DMs a month without you needing to lift a finger. Focus on picking up calls, sales, and growing your business instead of the outreach.</p>
+                <a href="#contact" class="cta-button">Schedule Your Call</a>
             </div>
         </div>
     </section>
 
-    <section id="benefits" class="py-16 md:py-24 bg-slate-900"> <div class="container mx-auto px-6">
-            <h2 class="section-title animate-on-scroll text-glow-blue">Advantages for Your Business</h2>
-            <div class="grid md:grid-cols-2 gap-8 mt-12">
-                <div class="card animate-on-scroll" style="--card-index: 1;">
-                    <h3 class="subsection-title text-blue-400">High-Quality Leads</h3>
+    <section id="how-it-works" class="py-20 md:py-32">
+        <div class="container mx-auto px-6">
+            <h2 class="section-title animate-on-scroll">How We Secure Your Sales Calls</h2>
+            <div class="space-y-16 md:space-y-24 mt-16">
+                <!-- Step 1 -->
+                <div class="step-item align-left animate-on-scroll" style="--item-index: 1;">
+                    <div class="step-number">1</div>
+                    <h3 class="subsection-title">Identifying Potential Clients</h3>
+                    <p>We search Instagram for individuals who are likely interested in what you offer. We analyze their profile content, hashtags used, and followed accounts.</p>
+                </div>
+                <!-- Step 2 -->
+                <div class="step-item align-right animate-on-scroll" style="--item-index: 2;">
+                    <div class="step-number">2</div>
+                    <h3 class="subsection-title">Initiating Conversations</h3>
+                    <p>Using established Instagram accounts, we send approximately 4,000 targeted messages monthly. This connects you with a steady stream of prospects.</p>
+                </div>
+                <!-- Step 3 -->
+                <div class="step-item align-left animate-on-scroll" style="--item-index: 3;">
+                    <div class="step-number">3</div>
+                    <h3 class="subsection-title">Qualifying Interested Leads</h3>
+                    <p>Our team engages in real conversations with everyone who responds. We carefully assess if their needs align with your services.</p>
+                </div>
+                <!-- Step 4 -->
+                <div class="step-item align-right animate-on-scroll" style="--item-index: 4;">
+                    <div class="step-number">4</div>
+                    <h3 class="subsection-title">Presenting Your Value</h3>
+                    <p>We explain the benefits of your business to potential clients. We answer their initial questions to prepare them for a productive sales call.</p>
+                </div>
+                <!-- Step 5 -->
+                <div class="step-item align-left animate-on-scroll" style="--item-index: 5;">
+                    <div class="step-number">5</div>
+                    <h3 class="subsection-title">Scheduling the Appointment</h3>
+                    <p>Finally, we book the sales call directly into your calendar. You can then connect with an informed and interested individual.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="benefits" class="py-20 md:py-32 bg-white">
+        <div class="container mx-auto px-6">
+            <h2 class="section-title animate-on-scroll">Advantages for Your Business</h2>
+            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8 mt-12">
+                <div class="card animate-on-scroll" style="--item-index: 1;">
+                    <h3 class="subsection-title text-blue-600">High-Quality Leads</h3>
                     <p>You connect with individuals who have a genuine interest and are suitable for your services.</p>
                 </div>
-                <div class="card animate-on-scroll" style="--card-index: 2;">
-                    <h3 class="subsection-title text-blue-400">Save Valuable Time</h3>
+                <div class="card animate-on-scroll" style="--item-index: 2;">
+                    <h3 class="subsection-title text-blue-600">Save Valuable Time</h3>
                     <p>We handle the lead generation process, allowing you more time to focus on your core business.</p>
                 </div>
-                <div class="card animate-on-scroll" style="--card-index: 3;">
-                    <h3 class="subsection-title text-blue-400">Consistent Call Volume</h3>
+                <div class="card animate-on-scroll" style="--item-index: 3;">
+                    <h3 class="subsection-title text-blue-600">Consistent Call Volume</h3>
                     <p>Our method helps ensure a steady stream of sales appointments, not just occasional ones.</p>
                 </div>
-                <div class="card animate-on-scroll" style="--card-index: 4;">
-                    <h3 class="subsection-title text-blue-400">Efficient Deal Closing</h3>
+                <div class="card animate-on-scroll" style="--item-index: 4;">
+                    <h3 class="subsection-title text-blue-600">Efficient Deal Closing</h3>
                     <p>Prospective clients are already informed about your business, making sales conversations more effective.</p>
                 </div>
             </div>
         </div>
     </section>
 
-    <section id="who-is-this-for" class="py-16 md:py-24">
+    <section id="who-is-this-for" class="py-20 md:py-32">
         <div class="container mx-auto px-6 text-center">
             <div class="animate-on-scroll">
-                <h2 class="section-title text-glow-blue">Is This Service Right for You?</h2>
-                <p class="text-lg md:text-xl mb-10 max-w-3xl mx-auto">
-                    If you are a coach, business owner, or service provider looking for more sales calls from Instagram, this service is designed for you. We help you acquire more clients without the usual effort.
-                </p>
+                <h2 class="section-title">Is This Service Right for You?</h2>
+                <p class="text-lg mb-10 max-w-3xl mx-auto">If you are a coach, business owner, or service provider looking for more sales calls from Instagram, this service is designed for you. We help you acquire more clients without the usual effort.</p>
             </div>
-            <div class="card inline-block p-8 rounded-xl text-left max-w-lg mx-auto animate-on-scroll" style="--card-index: 1;">
-                <h4 class="text-xl font-semibold mb-6 subsection-title">This service is ideal if:</h4>
+            <div class="card inline-block p-8 rounded-xl text-left max-w-lg mx-auto animate-on-scroll" style="--item-index: 1;">
+                <h4 class="text-xl font-semibold mb-6">This service is ideal if:</h4>
                 <ul class="space-y-4">
                     <li class="flex items-start">
-                        <svg class="w-6 h-6 mr-3 flex-shrink-0 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        <svg class="w-6 h-6 text-blue-500 mr-3 flex-shrink-0 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                         <span>You want a steady flow of clients but lack time for outreach.</span>
                     </li>
                     <li class="flex items-start">
-                        <svg class="w-6 h-6 mr-3 flex-shrink-0 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        <svg class="w-6 h-6 text-blue-500 mr-3 flex-shrink-0 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                         <span>Your own Instagram DM efforts haven't produced desired results.</span>
                     </li>
                     <li class="flex items-start">
-                        <svg class="w-6 h-6 mr-3 flex-shrink-0 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        <svg class="w-6 h-6 text-blue-500 mr-3 flex-shrink-0 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                         <span>You need a dependable method for getting regular sales calls.</span>
                     </li>
                     <li class="flex items-start">
-                        <svg class="w-6 h-6 mr-3 flex-shrink-0 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        <svg class="w-6 h-6 text-blue-500 mr-3 flex-shrink-0 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                         <span>You have satisfied past clients and aim to add 5+ new clients monthly.</span>
                     </li>
                 </ul>
@@ -364,31 +373,26 @@
         </div>
     </section>
 
-    <section id="contact" class="py-20 md:py-24">
+    <section id="contact" class="py-20 md:py-32">
         <div class="container mx-auto px-6 text-center animate-on-scroll">
-            <h2 class="text-3xl md:text-4xl font-bold mb-10 text-glow-blue">
-                Ready to Increase Your Sales Calls?
-            </h2>
-            <p class="text-lg md:text-xl mb-10 max-w-xl mx-auto">
-                Schedule directly below or use the floating badge.
-            </p>
-            
+            <h2 class="text-3xl md:text-4xl font-bold mb-6">Ready to Increase Your Sales Calls?</h2>
+            <p class="text-lg mb-10 max-w-xl mx-auto">Schedule directly below or use the floating badge.</p>
             <div class="calendly-inline-widget" data-url="https://calendly.com/mako-young0/introductory-call" style="min-width:320px;height:700px;"></div>
             <script type="text/javascript" src="https://assets.calendly.com/assets/external/widget.js" async></script>
-            
-            <p class="text-sm mt-8">Or email us: <a href="mailto:mako.young0@gmail.com" class="underline hover:text-blue-400 transition-colors duration-300">mako.young0@gmail.com</a></p>
+            <p class="text-sm mt-8">Or email us: <a href="mailto:mako.young0@gmail.com" class="underline hover:text-blue-600 transition-colors duration-300">mako.young0@gmail.com</a></p>
         </div>
     </section>
 
-    <footer class="bg-slate-950 py-10 text-center border-t border-slate-800">
+    <footer class="py-10 text-center border-t border-gray-200">
         <div class="container mx-auto px-6">
-            <p class="text-sm text-slate-500">&copy; <span id="year"></span> Mako Young. All Rights Reserved.</p>
+            <p class="text-sm text-gray-500">&copy; <span id="year"></span> Mako Young. All Rights Reserved.</p>
         </div>
     </footer>
 
     <script>
         document.getElementById('year').textContent = new Date().getFullYear();
 
+        // Animate on scroll
         const animatedElements = document.querySelectorAll('.animate-on-scroll');
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
@@ -398,6 +402,16 @@
             });
         }, { threshold: 0.1 });
         animatedElements.forEach(el => observer.observe(el));
+
+        // Add shadow to navbar on scroll
+        const navbar = document.getElementById('navbar');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 10) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+        });
     </script>
     <script src="https://assets.calendly.com/assets/external/widget.js" type="text/javascript" async></script>
     <script type="text/javascript">window.onload = function() { Calendly.initBadgeWidget({ url: 'https://calendly.com/mako-young0/introductory-call', text: 'Schedule time with me', color: '#2563eb', textColor: '#ffffff', branding: undefined }); }</script>
