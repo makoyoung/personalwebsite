@@ -1,0 +1,798 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced Stats Tools - Mako Young</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0"></script>
+    <script src="https://unpkg.com/@sgratzl/chartjs-chart-boxplot/build/index.umd.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: 'Inter', sans-serif;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            background-color: #f9fafb; /* gray-50 */
+            color: #1f2937; /* gray-800 */
+        }
+        /* Navbar Styles */
+        .navbar {
+            background-color: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid #e5e7eb;
+            position: sticky;
+            top: 0;
+            z-index: 50;
+        }
+        .navbar .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1280px;
+            margin: 0 auto;
+        }
+        .navbar-brand {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #111827;
+            text-decoration: none;
+        }
+        .navbar-links {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+        .navbar-links a, .dropdown-button {
+            color: #4b5563;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+            cursor: pointer;
+        }
+        .navbar-links a:hover, .dropdown-button:hover {
+            color: #1d4ed8;
+        }
+        .navbar-button {
+            padding: 0.625rem 1.25rem;
+            font-weight: 600;
+            border-radius: 0.5rem;
+            background-color: #2563eb;
+            color: #ffffff !important;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(37, 99, 235, 0.1), 0 1px 3px rgba(0,0,0,0.08);
+            text-decoration: none;
+        }
+        .navbar-button:hover {
+            background-color: #1d4ed8;
+            transform: translateY(-2px);
+            box-shadow: 0 7px 14px rgba(37, 99, 235, 0.1), 0 3px 6px rgba(0,0,0,0.08);
+        }
+        /* Dropdown Styles */
+        .dropdown {
+            position: relative;
+        }
+        .dropdown-menu {
+            display: none;
+            position: absolute;
+            top: 100%;
+            right: 0;
+            margin-top: 0.5rem;
+            background-color: white;
+            border-radius: 0.5rem;
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05);
+            border: 1px solid #e5e7eb;
+            width: 160px;
+            z-index: 100;
+        }
+        .dropdown-menu.open {
+            display: block;
+        }
+        .dropdown-menu a {
+            display: block;
+            padding: 0.75rem 1rem;
+            color: #374151;
+            font-weight: 500;
+        }
+        .dropdown-menu a:hover {
+            background-color: #f3f4f6;
+            color: #1d4ed8;
+        }
+        .dropdown-button svg {
+            transition: transform 0.2s ease-in-out;
+        }
+        .dropdown.open .dropdown-button svg {
+            transform: rotate(180deg);
+        }
+
+        /* Stats Tools Specific Styles */
+        .hidden-transition { display: none; }
+        .stem-leaf-table { border-collapse: collapse; font-family: 'Courier New', Courier, monospace; font-size: 1.1rem; }
+        .stem-leaf-table th, .stem-leaf-table td { padding: 8px 16px; text-align: left; }
+        .stem-leaf-table .stem-col { text-align: right; border-right: 2px solid #374151; }
+        .stem-leaf-table .leaf-col { letter-spacing: 0.2em; }
+        .explanation-box { background-color: #f8fafc; border-left: 4px solid #3b82f6; padding: 1rem; line-height: 1.6; }
+        .stats-grid { display: grid; grid-template-columns: auto 1fr; gap: 0.75rem 1.5rem; }
+        .stats-grid dt { font-weight: 600; color: #4b5563; }
+        .stats-grid dd { font-weight: 500; color: #1f2937; }
+    </style>
+</head>
+<body class="bg-gray-100 text-gray-800">
+
+    <nav class="navbar" id="navbar">
+        <div class="container">
+            <a href="index.html" class="navbar-brand">Mako Young</a>
+            <div class="navbar-links">
+                <a href="index.html#how-it-works">How it Works</a>
+                <a href="index.html#benefits">Features</a>
+                <div class="dropdown" id="tools-dropdown">
+                    <button class="dropdown-button flex items-center gap-1">
+                        Tools
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-4 h-4">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+                        </svg>
+                    </button>
+                    <div class="dropdown-menu">
+                        <a href="url-opener.html">URL Opener</a>
+                        <a href="graphs.html">Graphs</a>
+                    </div>
+                </div>
+                <a href="index.html#contact" class="navbar-button">Book Calls on Autopilot</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container mx-auto px-4 py-8 md:py-12 max-w-5xl space-y-12">
+        
+        <!-- Histogram Section -->
+        <section class="bg-white p-6 md:p-8 rounded-2xl shadow-lg">
+            <header class="text-center mb-8">
+                <h1 class="text-3xl md:text-4xl font-bold text-gray-900">Advanced Histogram Generator</h1>
+                <p class="mt-2 text-gray-600">For raw data or pre-grouped frequency tables.</p>
+            </header>
+            
+            <div class="mb-6">
+                <label class="block text-sm font-medium text-gray-700 mb-2">1. Choose Your Data Type</label>
+                <div class="flex gap-4 rounded-lg bg-gray-200 p-1">
+                    <button id="modeRaw" class="w-full py-2 px-4 text-sm font-semibold rounded-md transition-colors bg-white text-blue-600 shadow">Raw Data</button>
+                    <button id="modeGrouped" class="w-full py-2 px-4 text-sm font-semibold rounded-md transition-colors bg-transparent text-gray-600">Grouped Data</button>
+                </div>
+            </div>
+
+            <div id="input-section">
+                <!-- Histogram Raw Data Inputs -->
+                <div id="raw-data-inputs">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
+                        <div>
+                            <label for="rawData" class="block text-sm font-medium text-gray-700 mb-2">2. Paste Your Raw Data</label>
+                            <textarea id="rawData" rows="12" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500" placeholder="Enter numbers separated by spaces, commas, or new lines..."></textarea>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-semibold mb-3 text-gray-800">3. Configure Chart</h3>
+                            <div class="space-y-4">
+                                <div><label for="chartTitle" class="block text-sm font-medium text-gray-700">Chart Title</label><input type="text" id="chartTitle" value="Data Distribution" class="mt-1 w-full p-2 border border-gray-300 rounded-md"></div>
+                                <div><label for="binSize" class="block text-sm font-medium text-gray-700">Bin Size (Bucket Width)</label><input type="number" id="binSize" value="2" class="mt-1 w-full p-2 border border-gray-300 rounded-md"></div>
+                                <div><label for="xAxisLabel" class="block text-sm font-medium text-gray-700">X-Axis Label</label><input type="text" id="xAxisLabel" value="Profit Range (£'000s)" class="mt-1 w-full p-2 border border-gray-300 rounded-md"></div>
+                                <div><label for="yAxisLabel" class="block text-sm font-medium text-gray-700">Y-Axis Label</label><input type="text" id="yAxisLabel" value="Frequency" class="mt-1 w-full p-2 border border-gray-300 rounded-md"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Histogram Grouped Data Inputs -->
+                <div id="grouped-data-inputs" class="hidden-transition">
+                     <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
+                        <div>
+                            <label for="groupCategories" class="block text-sm font-medium text-gray-700 mb-2">2. Paste Categories</label>
+                            <textarea id="groupCategories" rows="12" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500" placeholder="Paste one category per line.&#10;Example:&#10;5.0 to < 7.0&#10;7.0 to < 9.0&#10;..."></textarea>
+                        </div>
+                        <div>
+                            <label for="groupFrequencies" class="block text-sm font-medium text-gray-700 mb-2">3. Paste Frequencies</label>
+                            <textarea id="groupFrequencies" rows="12" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500" placeholder="Paste one number per line, matching the categories.&#10;Example:&#10;3&#10;9&#10;..."></textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4">
+                <button id="generateBtn" class="w-full bg-blue-600 text-white font-semibold py-3 px-4 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-transform transform hover:scale-105">
+                    Generate Histogram
+                </button>
+                <button id="togglePolygonBtn" class="w-full bg-gray-500 text-white font-semibold py-3 px-4 rounded-lg hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-400 transition hidden-transition">
+                    Show Relative Frequency Polygon
+                </button>
+                <button id="downloadBtn" class="w-full bg-green-600 text-white font-semibold py-3 px-4 rounded-lg hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition hidden-transition">
+                    Download Chart (HD)
+                </button>
+            </div>
+            <div id="error-message" class="mt-4 text-red-600 text-sm font-medium hidden"></div>
+
+            <div class="mt-8 md:mt-12 border-t pt-8">
+                <div id="chart-container" class="bg-gray-50 p-4 rounded-lg min-h-[450px] flex items-center justify-center">
+                    <canvas id="histogramChart"></canvas>
+                    <p id="placeholder-text" class="text-gray-500">Your chart will appear here.</p>
+                </div>
+                <div id="histogram-explanation" class="mt-4 text-sm text-gray-700 hidden-transition explanation-box"></div>
+            </div>
+        </section>
+
+        <!-- Stem and Leaf Section -->
+        <section class="bg-white p-6 md:p-8 rounded-2xl shadow-lg">
+            <header class="text-center mb-8">
+                <h1 class="text-3xl md:text-4xl font-bold text-gray-900">Stem-and-Leaf Display Generator</h1>
+                <p class="mt-2 text-gray-600">Create and download a classic stem-and-leaf plot.</p>
+            </header>
+
+            <div>
+                <label for="stemRawData" class="block text-sm font-medium text-gray-700 mb-2">1. Paste Your Raw Data</label>
+                <textarea id="stemRawData" rows="8" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500" placeholder="Enter numbers separated by spaces, commas, or new lines. This tool works best with integers."></textarea>
+            </div>
+
+            <div class="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
+                <button id="generateStemBtn" class="w-full bg-blue-600 text-white font-semibold py-3 px-4 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-transform transform hover:scale-105">
+                    Generate Stem-and-Leaf
+                </button>
+                <button id="downloadStemBtn" class="w-full bg-green-600 text-white font-semibold py-3 px-4 rounded-lg hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition hidden-transition">
+                    Download Display (HD)
+                </button>
+            </div>
+            <div id="stem-error-message" class="mt-4 text-red-600 text-sm font-medium hidden"></div>
+
+            <div class="mt-8 md:mt-12 border-t pt-8">
+                <div id="stem-display-container" class="bg-gray-50 p-4 rounded-lg min-h-[250px] flex items-center justify-center">
+                    <p id="stem-placeholder-text" class="text-gray-500">Your stem-and-leaf display will appear here.</p>
+                </div>
+                <div id="stem-explanation" class="mt-4 text-sm text-gray-700 hidden-transition explanation-box"></div>
+            </div>
+        </section>
+
+        <!-- Ogive Section -->
+        <section class="bg-white p-6 md:p-8 rounded-2xl shadow-lg">
+            <header class="text-center mb-8">
+                <h1 class="text-3xl md:text-4xl font-bold text-gray-900">Ogive Generator</h1>
+                <p class="mt-2 text-gray-600">Create a cumulative frequency graph (Less Than & Greater Than).</p>
+            </header>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
+                <div>
+                    <label for="ogiveCategories" class="block text-sm font-medium text-gray-700 mb-2">1. Paste Class Boundaries</label>
+                    <textarea id="ogiveCategories" rows="8" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500" placeholder="Paste one category per line.&#10;Example:&#10;5 to 7&#10;7 to 9&#10;..."></textarea>
+                </div>
+                <div>
+                    <label for="ogiveFrequencies" class="block text-sm font-medium text-gray-700 mb-2">2. Paste Frequencies</label>
+                    <textarea id="ogiveFrequencies" rows="8" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500" placeholder="Paste one number per line, matching the categories.&#10;Example:&#10;3&#10;9&#10;..."></textarea>
+                </div>
+            </div>
+
+            <div class="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
+                <button id="generateOgiveBtn" class="w-full bg-blue-600 text-white font-semibold py-3 px-4 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-transform transform hover:scale-105">
+                    Generate Ogive
+                </button>
+                <button id="downloadOgiveBtn" class="w-full bg-green-600 text-white font-semibold py-3 px-4 rounded-lg hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition hidden-transition">
+                    Download Ogive (HD)
+                </button>
+            </div>
+            <div id="ogive-error-message" class="mt-4 text-red-600 text-sm font-medium hidden"></div>
+
+            <div class="mt-8 md:mt-12 border-t pt-8">
+                <div id="ogive-chart-container" class="bg-gray-50 p-4 rounded-lg min-h-[450px] flex items-center justify-center">
+                    <canvas id="ogiveChart"></canvas>
+                    <p id="ogive-placeholder-text" class="text-gray-500">Your ogive chart will appear here.</p>
+                </div>
+                <div id="ogive-explanation" class="mt-4 text-sm text-gray-700 hidden-transition explanation-box"></div>
+            </div>
+        </section>
+
+        <!-- Descriptive Statistics Section -->
+        <section class="bg-white p-6 md:p-8 rounded-2xl shadow-lg">
+            <header class="text-center mb-8">
+                <h1 class="text-3xl md:text-4xl font-bold text-gray-900">Descriptive Statistics Calculator</h1>
+                <p class="mt-2 text-gray-600">Calculate key statistical measures from your raw data.</p>
+            </header>
+
+            <div>
+                <label for="statsRawData" class="block text-sm font-medium text-gray-700 mb-2">1. Paste Your Raw Data</label>
+                <textarea id="statsRawData" rows="8" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500" placeholder="Enter numbers separated by spaces, commas, or new lines."></textarea>
+            </div>
+
+            <div class="mt-6">
+                <button id="calculateStatsBtn" class="w-full bg-blue-600 text-white font-semibold py-3 px-4 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-transform transform hover:scale-105">
+                    Calculate Statistics
+                </button>
+            </div>
+            <div id="stats-error-message" class="mt-4 text-red-600 text-sm font-medium hidden"></div>
+
+            <div class="mt-8 md:mt-12 border-t pt-8">
+                <div id="stats-results-container" class="bg-gray-50 p-6 rounded-lg min-h-[250px] flex items-center justify-center">
+                    <p id="stats-placeholder-text" class="text-gray-500">Your statistical results will appear here.</p>
+                </div>
+                <div id="stats-explanation" class="mt-4 text-sm text-gray-700 hidden-transition explanation-box"></div>
+            </div>
+        </section>
+
+        <!-- Box and Whisker Plot Section -->
+        <section class="bg-white p-6 md:p-8 rounded-2xl shadow-lg">
+            <header class="text-center mb-8">
+                <h1 class="text-3xl md:text-4xl font-bold text-gray-900">Box and Whisker Plot Generator</h1>
+                <p class="mt-2 text-gray-600">Visualize data distribution, quartiles, and outliers.</p>
+            </header>
+
+            <div>
+                <label for="boxRawData" class="block text-sm font-medium text-gray-700 mb-2">1. Paste Your Raw Data</label>
+                <textarea id="boxRawData" rows="8" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500" placeholder="Enter numbers separated by spaces, commas, or new lines."></textarea>
+            </div>
+
+            <div class="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
+                <button id="generateBoxBtn" class="w-full bg-blue-600 text-white font-semibold py-3 px-4 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-transform transform hover:scale-105">
+                    Generate Plot
+                </button>
+                <button id="downloadBoxBtn" class="w-full bg-green-600 text-white font-semibold py-3 px-4 rounded-lg hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition hidden-transition">
+                    Download Plot (HD)
+                </button>
+            </div>
+            <div id="box-error-message" class="mt-4 text-red-600 text-sm font-medium hidden"></div>
+
+            <div class="mt-8 md:mt-12 border-t pt-8">
+                <div id="box-chart-container" class="bg-gray-50 p-4 rounded-lg min-h-[250px] flex items-center justify-center">
+                     <canvas id="boxPlotChart"></canvas>
+                    <p id="box-placeholder-text" class="text-gray-500">Your box plot will appear here.</p>
+                </div>
+                <div id="box-explanation" class="mt-4 text-sm text-gray-700 hidden-transition explanation-box"></div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="py-10 text-center border-t border-gray-200">
+        <div class="container mx-auto px-6">
+            <p class="text-sm text-gray-500">&copy; <span id="year"></span> Mako Young. All Rights Reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        // --- Navbar Dropdown Logic ---
+        const dropdown = document.getElementById('tools-dropdown');
+        const dropdownButton = dropdown.querySelector('.dropdown-button');
+        const dropdownMenu = dropdown.querySelector('.dropdown-menu');
+        
+        dropdownButton.addEventListener('click', () => {
+            dropdown.classList.toggle('open');
+            dropdownMenu.classList.toggle('open');
+        });
+
+        // Close dropdown if clicked outside
+        window.addEventListener('click', (e) => {
+            if (!dropdown.contains(e.target)) {
+                dropdown.classList.remove('open');
+                dropdownMenu.classList.remove('open');
+            }
+        });
+
+        // --- Footer Year ---
+        document.getElementById('year').textContent = new Date().getFullYear();
+
+        // --- Stats Tools Logic (Copied from your provided code) ---
+        let currentMode = 'raw';
+        let histogramChart = null;
+        let ogiveChart = null;
+        let boxPlotChart = null;
+        let lastChartDataResult = null;
+        let lastTitles = null;
+        let isPolygonVisible = false;
+
+        const modeRawBtn = document.getElementById('modeRaw');
+        const modeGroupedBtn = document.getElementById('modeGrouped');
+        const rawDataInputsDiv = document.getElementById('raw-data-inputs');
+        const groupedDataInputsDiv = document.getElementById('grouped-data-inputs');
+        const generateBtn = document.getElementById('generateBtn');
+        const togglePolygonBtn = document.getElementById('togglePolygonBtn');
+        const downloadBtn = document.getElementById('downloadBtn');
+        const errorMessage = document.getElementById('error-message');
+        const chartContainer = document.getElementById('chart-container');
+        const placeholderText = document.getElementById('placeholder-text');
+        const histogramExplanation = document.getElementById('histogram-explanation');
+        const ctx = document.getElementById('histogramChart').getContext('2d');
+        
+        const rawDataInput = document.getElementById('rawData');
+        const binSizeInput = document.getElementById('binSize');
+        const chartTitleInput = document.getElementById('chartTitle');
+        const xAxisLabelInput = document.getElementById('xAxisLabel');
+        const yAxisLabelInput = document.getElementById('yAxisLabel');
+        const groupCategoriesInput = document.getElementById('groupCategories');
+        const groupFrequenciesInput = document.getElementById('groupFrequencies');
+
+        const generateStemBtn = document.getElementById('generateStemBtn');
+        const downloadStemBtn = document.getElementById('downloadStemBtn');
+        const stemRawDataInput = document.getElementById('stemRawData');
+        const stemErrorMessage = document.getElementById('stem-error-message');
+        const stemDisplayContainer = document.getElementById('stem-display-container');
+        const stemPlaceholderText = document.getElementById('stem-placeholder-text');
+        const stemExplanation = document.getElementById('stem-explanation');
+
+        const generateOgiveBtn = document.getElementById('generateOgiveBtn');
+        const downloadOgiveBtn = document.getElementById('downloadOgiveBtn');
+        const ogiveCategoriesInput = document.getElementById('ogiveCategories');
+        const ogiveFrequenciesInput = document.getElementById('ogiveFrequencies');
+        const ogiveErrorMessage = document.getElementById('ogive-error-message');
+        const ogiveChartContainer = document.getElementById('ogive-chart-container');
+        const ogivePlaceholderText = document.getElementById('ogive-placeholder-text');
+        const ogiveExplanation = document.getElementById('ogive-explanation');
+        const ogiveCtx = document.getElementById('ogiveChart').getContext('2d');
+
+        const calculateStatsBtn = document.getElementById('calculateStatsBtn');
+        const statsRawDataInput = document.getElementById('statsRawData');
+        const statsErrorMessage = document.getElementById('stats-error-message');
+        const statsResultsContainer = document.getElementById('stats-results-container');
+        const statsPlaceholderText = document.getElementById('stats-placeholder-text');
+        const statsExplanation = document.getElementById('stats-explanation');
+
+        const generateBoxBtn = document.getElementById('generateBoxBtn');
+        const downloadBoxBtn = document.getElementById('downloadBoxBtn');
+        const boxRawDataInput = document.getElementById('boxRawData');
+        const boxErrorMessage = document.getElementById('box-error-message');
+        const boxChartContainer = document.getElementById('box-chart-container');
+        const boxPlaceholderText = document.getElementById('box-placeholder-text');
+        const boxCtx = document.getElementById('boxPlotChart').getContext('2d');
+
+        Chart.register(ChartDataLabels);
+
+        modeRawBtn.addEventListener('click', () => switchMode('raw'));
+        modeGroupedBtn.addEventListener('click', () => switchMode('grouped'));
+        generateBtn.addEventListener('click', createHistogram);
+        togglePolygonBtn.addEventListener('click', togglePolygon);
+        downloadBtn.addEventListener('click', downloadChart);
+        generateStemBtn.addEventListener('click', createStemAndLeaf);
+        downloadStemBtn.addEventListener('click', downloadStemAndLeaf);
+        generateOgiveBtn.addEventListener('click', createOgive);
+        downloadOgiveBtn.addEventListener('click', downloadOgive);
+        calculateStatsBtn.addEventListener('click', calculateAndShowStatistics);
+        generateBoxBtn.addEventListener('click', createBoxPlot);
+        downloadBoxBtn.addEventListener('click', downloadBoxPlot);
+
+        function switchMode(mode) {
+            currentMode = mode;
+            const isRaw = mode === 'raw';
+            modeRawBtn.classList.toggle('bg-white', isRaw);
+            modeRawBtn.classList.toggle('text-blue-600', isRaw);
+            modeRawBtn.classList.toggle('shadow', isRaw);
+            modeRawBtn.classList.toggle('bg-transparent', !isRaw);
+            modeRawBtn.classList.toggle('text-gray-600', !isRaw);
+            
+            modeGroupedBtn.classList.toggle('bg-white', !isRaw);
+            modeGroupedBtn.classList.toggle('text-blue-600', !isRaw);
+            modeGroupedBtn.classList.toggle('shadow', !isRaw);
+            modeGroupedBtn.classList.toggle('bg-transparent', isRaw);
+            modeGroupedBtn.classList.toggle('text-gray-600', isRaw);
+
+            rawDataInputsDiv.classList.toggle('hidden-transition', !isRaw);
+            groupedDataInputsDiv.classList.toggle('hidden-transition', isRaw);
+        }
+
+        function createHistogram() {
+            clearError('hist');
+            togglePolygonBtn.classList.add('hidden-transition');
+            downloadBtn.classList.add('hidden-transition');
+            const titles = { chartTitle: chartTitleInput.value, xAxisLabel: xAxisLabelInput.value, yAxisLabel: yAxisLabelInput.value };
+            let chartDataResult = (currentMode === 'raw') ? processRawData() : processGroupedData();
+            if (chartDataResult) {
+                lastChartDataResult = chartDataResult;
+                lastTitles = titles;
+                isPolygonVisible = false;
+                renderChart(lastChartDataResult, lastTitles, isPolygonVisible);
+                generateHistogramExplanation(lastChartDataResult, lastTitles);
+                togglePolygonBtn.classList.remove('hidden-transition');
+                downloadBtn.classList.remove('hidden-transition');
+                togglePolygonBtn.textContent = 'Show Relative Frequency Polygon';
+            }
+        }
+
+        function togglePolygon() {
+            if (!lastChartDataResult) return;
+            isPolygonVisible = !isPolygonVisible;
+            renderChart(lastChartDataResult, lastTitles, isPolygonVisible);
+            generateHistogramExplanation(lastChartDataResult, lastTitles);
+            togglePolygonBtn.textContent = isPolygonVisible ? 'Hide Relative Frequency Polygon' : 'Show Relative Frequency Polygon';
+        }
+
+        function downloadChart() { if (histogramChart) downloadCanvasAsHD(histogramChart, 'histogram-hd.png'); }
+        
+        function processGroupedData() {
+            const categoriesText = groupCategoriesInput.value.trim();
+            const frequenciesText = groupFrequenciesInput.value.trim();
+            if (!categoriesText || !frequenciesText) { showError("Please provide both categories and frequencies.", 'hist'); return null; }
+            const tooltipLabels = categoriesText.split('\n').filter(l => l.trim() !== '');
+            const frequencies = frequenciesText.split('\n').filter(f => f.trim() !== '').map(Number);
+            if (tooltipLabels.length !== frequencies.length) { showError(`Mismatch: ${tooltipLabels.length} categories and ${frequencies.length} frequencies. They must be equal.`, 'hist'); return null; }
+            if (frequencies.some(isNaN)) { showError("All frequencies must be valid numbers.", 'hist'); return null; }
+            const binStarts = tooltipLabels.map(l => parseFloat(l.match(/-?\d+\.?\d*/)?.[0]));
+            if(binStarts.some(isNaN)) { showError("Could not parse numbers from categories. Ensure they start with a number (e.g., '5 to 7').", 'hist'); return null; }
+            const binSize = binStarts.length > 1 ? binStarts[1] - binStarts[0] : 0;
+            const axisMin = binStarts[0];
+            const axisMax = binStarts[binStarts.length - 1] + binSize;
+            const chartData = frequencies.map((freq, i) => ({ x: binStarts[i] + binSize / 2, y: freq }));
+            const total = frequencies.reduce((a, b) => a + b, 0);
+            const relativeFrequencies = total > 0 ? frequencies.map(f => f / total) : [];
+            return { chartData, axisMin, axisMax, binSize, tooltipLabels, relativeFrequencies };
+        }
+
+        function processRawData() {
+            const rawText = rawDataInput.value.trim();
+            const binSize = parseFloat(binSizeInput.value);
+            if (!rawText) { showError("Please enter some raw data.", 'hist'); return null; }
+            if (isNaN(binSize) || binSize <= 0) { showError("Bin size must be a positive number.", 'hist'); return null; }
+            const data = rawText.split(/[\s,;\n]+/).filter(n => n !== '').map(Number).filter(n => !isNaN(n));
+            if (data.length < 2) { showError("Please enter at least two valid numbers.", 'hist'); return null; }
+            const min = Math.min(...data);
+            const max = Math.max(...data);
+            const axisMin = Math.floor(min / binSize) * binSize;
+            const bins = new Map();
+            const tooltipLabels = [];
+            let currentBinStart = axisMin;
+            while(currentBinStart <= max) {
+                const binEnd = currentBinStart + binSize;
+                const fullLabel = `${currentBinStart} to <${binEnd}`;
+                tooltipLabels.push(fullLabel);
+                bins.set(fullLabel, 0);
+                currentBinStart += binSize;
+            }
+            const axisMax = currentBinStart;
+            data.forEach(value => {
+                let binStart = (value === axisMax && value > axisMin) ? axisMax - binSize : Math.floor(value / binSize) * binSize;
+                const fullLabel = `${binStart} to <${binStart + binSize}`;
+                if (bins.has(fullLabel)) { bins.set(fullLabel, bins.get(fullLabel) + 1); }
+            });
+            const frequencies = tooltipLabels.map(label => bins.get(label));
+            const total = data.length;
+            const relativeFrequencies = total > 0 ? frequencies.map(f => f / total) : [];
+            const chartData = tooltipLabels.map((label, i) => ({ x: parseFloat(label.match(/-?\d+\.?\d*/)[0]) + binSize / 2, y: frequencies[i] }));
+            return { chartData, axisMin, axisMax, binSize, tooltipLabels, relativeFrequencies };
+        }
+
+        function renderChart(chartDataResult, titles, showPolygon) {
+            if (histogramChart) histogramChart.destroy();
+            const { chartData, axisMin, axisMax, binSize, tooltipLabels, relativeFrequencies } = chartDataResult;
+            const datasets = [{ type: 'bar', label: titles.yAxisLabel, yAxisID: 'y_freq', data: chartData, backgroundColor: 'rgba(220, 226, 239, 0.7)', borderColor: 'rgba(107, 114, 128, 1)', borderWidth: 1, barPercentage: 1.0, categoryPercentage: 1.0 }];
+            const scales = { y_freq: { type: 'linear', position: 'left', beginAtZero: true, title: { display: true, text: titles.yAxisLabel, font: { size: 14, weight: '500' } } }, x: { type: 'linear', min: axisMin, max: axisMax, title: { display: true, text: titles.xAxisLabel, font: { size: 14, weight: '500' } }, ticks: { stepSize: binSize }, grid: { offset: false } } };
+            if (showPolygon) {
+                const polygonData = chartData.map((d, i) => ({ x: d.x, y: relativeFrequencies[i] }));
+                datasets.push({ type: 'line', label: 'Relative Frequency', yAxisID: 'y_rel_freq', data: polygonData, borderColor: '#C00000', backgroundColor: 'rgba(192, 0, 0, 0.5)', pointRadius: 4, pointHoverRadius: 6, datalabels: { display: false } });
+                scales.y_rel_freq = { type: 'linear', position: 'right', min: 0, title: { display: true, text: 'Relative Frequency', font: { size: 14, weight: '500' } }, ticks: { callback: value => (value * 100).toFixed(0) + '%' }, grid: { drawOnChartArea: false } };
+            }
+            histogramChart = new Chart(ctx, { data: { datasets }, options: { responsive: true, maintainAspectRatio: false, plugins: { title: { display: true, text: titles.chartTitle, font: { size: 18, weight: '600' }, padding: { bottom: 20 } }, legend: { display: showPolygon }, datalabels: { anchor: 'end', align: 'top', color: '#B91C1C', font: { weight: 'bold' }, formatter: (value) => value.y > 0 ? value.y : '', offset: 5 }, tooltip: { callbacks: { title: (context) => tooltipLabels[context[0].dataIndex], label: (context) => (context.dataset.type === 'line') ? `Relative Freq: ${(context.raw.y * 100).toFixed(1)}%` : `${titles.yAxisLabel || 'Frequency'}: ${context.raw.y}` } } }, scales: scales } });
+        }
+
+        function generateHistogramExplanation(data, titles) {
+            const { tooltipLabels, chartData } = data;
+            const maxFreq = Math.max(...chartData.map(d => d.y));
+            const modalClass = tooltipLabels[chartData.findIndex(d => d.y === maxFreq)];
+            const text = `<p>A <strong>histogram</strong> shows how your data is spread out. It groups numbers into ranges, called bins or classes.</p><ul class="list-disc list-inside mt-2 space-y-1"><li>The <strong>X-axis (bottom)</strong> shows the data ranges you set, which is your '${titles.xAxisLabel}'.</li><li>The <strong>Y-axis (left)</strong> shows the count of how many data points fall into each range. This is the '${titles.yAxisLabel}'.</li><li>The tallest bar is the range <strong>${modalClass}</strong>, which has the highest frequency of <strong>${maxFreq}</strong>. This is the modal class.</li></ul>${isPolygonVisible ? "<p class='mt-2'>The red line is a <strong>relative frequency polygon</strong>. It shows the percentage of data in each bin, using the right-hand axis.</p>" : ""}`;
+            histogramExplanation.innerHTML = text;
+            histogramExplanation.classList.remove('hidden-transition');
+        }
+
+        function createStemAndLeaf() {
+            clearError('stem');
+            const rawText = stemRawDataInput.value.trim();
+            if (!rawText) { showError("Please enter some data.", 'stem'); return; }
+            const data = rawText.split(/[\s,;\n]+/).filter(n => n !== '').map(Number).filter(n => !isNaN(n));
+            if (data.length < 1) { showError("Please enter at least one valid number.", 'stem'); return; }
+            data.sort((a, b) => a - b);
+            const plot = new Map();
+            let minStem = Infinity, maxStem = -Infinity;
+            data.forEach(n => {
+                const s = n.toString();
+                const stem = s.length > 1 ? s.slice(0, -1) : '0';
+                const leaf = s.slice(-1);
+                const stemNum = parseInt(stem);
+                if (!plot.has(stemNum)) plot.set(stemNum, []);
+                plot.get(stemNum).push(leaf);
+                if (stemNum < minStem) minStem = stemNum;
+                if (stemNum > maxStem) maxStem = stemNum;
+            });
+            for (let i = minStem; i <= maxStem; i++) { if (!plot.has(i)) plot.set(i, []); }
+            const sortedStems = Array.from(plot.keys()).sort((a,b) => a - b);
+            let tableHTML = '<table class="stem-leaf-table"><thead><tr><th>Stem</th><th>Leaf</th></tr></thead><tbody>';
+            sortedStems.forEach(stem => tableHTML += `<tr><td class="stem-col">${stem}</td><td class="leaf-col">${plot.get(stem).join('')}</td></tr>`);
+            tableHTML += '</tbody></table>';
+            const keyLeaf = data[0].toString().slice(-1);
+            const keyStem = data[0].toString().length > 1 ? data[0].toString().slice(0, -1) : '0';
+            const keyExample = data[0];
+            const keyHTML = `<div class="mt-4 font-mono"><strong>Key:</strong> ${keyStem} | ${keyLeaf} = ${keyExample}</div>`;
+            stemDisplayContainer.innerHTML = `<div>${tableHTML}${keyHTML}</div>`;
+            stemPlaceholderText.classList.add('hidden-transition');
+            generateStemAndLeafExplanation(plot, keyHTML);
+            downloadStemBtn.classList.remove('hidden-transition');
+        }
+
+        function generateStemAndLeafExplanation(plot, keyHTML) {
+            let maxLeaves = 0, modalStem = '';
+            plot.forEach((leaves, stem) => { if (leaves.length > maxLeaves) { maxLeaves = leaves.length; modalStem = stem; } });
+            const text = `<p>A <strong>stem-and-leaf display</strong> organizes your data by splitting each number into a "stem" and a "leaf".</p><ul class="list-disc list-inside mt-2 space-y-1"><li>The <strong>Stem</strong> column shows the first part of your numbers.</li><li>The <strong>Leaf</strong> column shows the last digit for each number in that stem's row.</li><li>The <strong>Key</strong> tells you how to read a number. In this case, ${keyHTML.replace(/<[^>]*>/g, '').replace('Key:', '').trim()}.</li><li>The row with stem <strong>${modalStem}</strong> has the most leaves (${maxLeaves}), meaning it's the most common range.</li></ul>`;
+            stemExplanation.innerHTML = text;
+            stemExplanation.classList.remove('hidden-transition');
+        }
+
+        function downloadStemAndLeaf() { if (stemDisplayContainer.querySelector('div')) downloadCanvasAsHD(null, 'stem-and-leaf-hd.png', stemDisplayContainer.querySelector('div')); }
+
+        function createOgive() {
+            clearError('ogive');
+            const data = processOgiveData();
+            if (data) { renderOgive(data); generateOgiveExplanation(data); downloadOgiveBtn.classList.remove('hidden-transition'); } 
+            else { downloadOgiveBtn.classList.add('hidden-transition'); }
+        }
+
+        function processOgiveData() {
+            const categoriesText = ogiveCategoriesInput.value.trim();
+            const frequenciesText = ogiveFrequenciesInput.value.trim();
+            if (!categoriesText || !frequenciesText) { showError("Please provide both categories and frequencies.", 'ogive'); return null; }
+            const categories = categoriesText.split('\n').filter(l => l.trim() !== '');
+            const frequencies = frequenciesText.split('\n').filter(f => f.trim() !== '').map(Number);
+            if (categories.length !== frequencies.length) { showError(`Mismatch: ${categories.length} categories and ${frequencies.length} frequencies.`, 'ogive'); return null; }
+            if (frequencies.some(isNaN)) { showError("All frequencies must be valid numbers.", 'ogive'); return null; }
+            const boundaries = categories.map(c => c.match(/-?\d+\.?\d*/g).map(Number));
+            if (boundaries.some(b => b.length < 2)) { showError("Could not parse boundaries from categories. Use format '5 to 7'.", 'ogive'); return null; }
+            const total = frequencies.reduce((a, b) => a + b, 0);
+            const lessThanPoints = [];
+            let cumulativeFreq = 0;
+            lessThanPoints.push({x: boundaries[0][0], y: 0});
+            for(let i = 0; i < frequencies.length; i++) { cumulativeFreq += frequencies[i]; lessThanPoints.push({x: boundaries[i][1], y: cumulativeFreq}); }
+            const greaterThanPoints = [];
+            let remainingFreq = total;
+            greaterThanPoints.push({x: boundaries[0][0], y: remainingFreq});
+            for(let i = 0; i < frequencies.length; i++) { remainingFreq -= frequencies[i]; greaterThanPoints.push({x: boundaries[i][1], y: remainingFreq}); }
+            return { lessThanPoints, greaterThanPoints, total, boundaries };
+        }
+
+        function renderOgive(data) {
+            if (ogiveChart) ogiveChart.destroy();
+            const { lessThanPoints, greaterThanPoints, total } = data;
+            ogiveChart = new Chart(ogiveCtx, { type: 'line', data: { datasets: [ { label: 'Less Than Ogive', data: lessThanPoints, borderColor: 'rgb(75, 192, 192)', backgroundColor: 'rgba(75, 192, 192, 0.5)', yAxisID: 'y_abs', }, { label: 'Greater Than Ogive', data: greaterThanPoints, borderColor: 'rgb(255, 99, 132)', backgroundColor: 'rgba(255, 99, 132, 0.5)', yAxisID: 'y_abs', } ] }, options: { responsive: true, maintainAspectRatio: false, plugins: { title: { display: true, text: 'Cumulative Frequency Ogive', font: { size: 18 } }, datalabels: { display: false } }, scales: { x: { type: 'linear', title: { display: true, text: 'Class Boundaries' } }, y_abs: { type: 'linear', position: 'left', min: 0, max: total, title: { display: true, text: 'Absolute Cumulative Frequency' } }, y_rel: { type: 'linear', position: 'right', min: 0, max: 100, title: { display: true, text: 'Relative Cumulative Frequency (%)' }, ticks: { callback: value => value + '%' }, grid: { drawOnChartArea: false } } } } });
+            ogivePlaceholderText.classList.add('hidden-transition');
+        }
+        
+        function generateOgiveExplanation(data) {
+            const { total, lessThanPoints } = data;
+            const medianPoint = lessThanPoints.find(p => p.y >= total / 2);
+            const text = `<p>An <strong>ogive</strong> (oh-jive) is a graph of a "running total." It shows the cumulative frequency of your data.</p><ul class="list-disc list-inside mt-2 space-y-1"><li>The <strong>"Less Than" Ogive (blue line)</strong> shows how many data points are less than a certain value. It always goes up, starting at 0 and ending at the total number of data points (${total}).</li><li>The <strong>"Greater Than" Ogive (pink line)</strong> shows how many data points are greater than or equal to a certain value. It always goes down, starting at the total (${total}) and ending at 0.</li><li>The point where the two lines cross represents the <strong>median</strong>. For this data, the median is around the x-value of <strong>${medianPoint ? medianPoint.x : 'N/A'}</strong>.</li></ul>`;
+            ogiveExplanation.innerHTML = text;
+            ogiveExplanation.classList.remove('hidden-transition');
+        }
+
+        function downloadOgive() { if (ogiveChart) downloadCanvasAsHD(ogiveChart, 'ogive-hd.png'); }
+
+        function calculateAndShowStatistics() {
+            clearError('stats');
+            const rawText = statsRawDataInput.value.trim();
+            if (!rawText) { showError("Please enter some data.", 'stats'); return; }
+            const data = rawText.split(/[\s,;\n]+/).filter(n => n !== '').map(Number).filter(n => !isNaN(n));
+            if (data.length < 2) { showError("Please enter at least two valid numbers.", 'stats'); return; }
+            data.sort((a, b) => a - b);
+            const min = data[0], max = data[data.length - 1], range = max - min, sum = data.reduce((a, v) => a + v, 0), mean = sum / data.length;
+            const mid = Math.floor(data.length / 2);
+            const median = data.length % 2 === 0 ? (data[mid - 1] + data[mid]) / 2 : data[mid];
+            const sqDiffs = data.map(v => (v - mean) ** 2);
+            const variancePop = sqDiffs.reduce((a, v) => a + v, 0) / data.length;
+            const stdDevPop = Math.sqrt(variancePop);
+            const varianceSample = sqDiffs.reduce((a, v) => a + v, 0) / (data.length - 1);
+            const stdDevSample = Math.sqrt(varianceSample);
+            const freqMap = new Map();
+            data.forEach(num => freqMap.set(num, (freqMap.get(num) || 0) + 1));
+            let maxFreq = 0;
+            freqMap.forEach(freq => { if (freq > maxFreq) maxFreq = freq; });
+            let modes = [];
+            if (maxFreq > 1) { freqMap.forEach((freq, num) => { if (freq === maxFreq) modes.push(num); }); }
+            if ([...freqMap.values()].length > 1 && [...freqMap.values()].every(f => f === [...freqMap.values()][0])) { modes = []; }
+            let modality;
+            switch(modes.length) { case 0: modality = 'No mode'; break; case 1: modality = 'Unimodal'; break; case 2: modality = 'Bimodal'; break; case 3: modality = 'Trimodal'; break; default: modality = 'Multimodal'; }
+            const results = { min, max, range, mean, median, stdDevSample, stdDevPop, modes: modes.length > 0 ? modes.join(', ') : 'N/A', modality };
+            displayStatistics(results);
+            generateStatisticsExplanation(results);
+        }
+
+        function displayStatistics(results) {
+            statsResultsContainer.innerHTML = `<dl class="stats-grid"><dt>Minimum Value:</dt><dd>${results.min.toLocaleString()}</dd><dt>Maximum Value:</dt><dd>${results.max.toLocaleString()}</dd><dt>Range:</dt><dd>${results.range.toLocaleString()}</dd><dt>Mean:</dt><dd>${results.mean.toFixed(4)}</dd><dt>Median:</dt><dd>${results.median.toLocaleString()}</dd><dt>Mode(s):</dt><dd>${results.modes}</dd><dt>Modality:</dt><dd>${results.modality}</dd><dt>Std Dev (Sample):</dt><dd>${results.stdDevSample.toFixed(4)}</dd><dt>Std Dev (Population):</dt><dd>${results.stdDevPop.toFixed(4)}</dd></dl>`;
+            statsPlaceholderText.classList.add('hidden-transition');
+        }
+
+        function generateStatisticsExplanation(results) {
+            const text = `<p>These are common measures used to summarize your dataset:</p><ul class="list-disc list-inside mt-2 space-y-1"><li><strong>Min, Max, & Range:</strong> Your data values go from <strong>${results.min.toLocaleString()}</strong> to <strong>${results.max.toLocaleString()}</strong>, spanning a range of <strong>${results.range.toLocaleString()}</strong>.</li><li><strong>Mean vs. Median:</strong> The <strong>mean</strong> (average) is <strong>${results.mean.toFixed(2)}</strong>, while the <strong>median</strong> (middle value) is <strong>${results.median.toLocaleString()}</strong>. If these are very different, it might mean your data is skewed.</li><li><strong>Mode:</strong> The most common value(s) is/are <strong>${results.modes}</strong>. This makes your data <strong>${results.modality}</strong>.</li><li><strong>Standard Deviation:</strong> This measures data spread. Use the <strong>Sample</strong> value (<strong>${results.stdDevSample.toFixed(2)}</strong>) if your data is a small part of a larger group. Use the <strong>Population</strong> value (<strong>${results.stdDevPop.toFixed(2)}</strong>) if your data is the entire group.</li></ul>`;
+            statsExplanation.innerHTML = text;
+            statsExplanation.classList.remove('hidden-transition');
+        }
+
+        function createBoxPlot() {
+            clearError('box');
+            const rawText = boxRawDataInput.value.trim();
+            if (!rawText) { showError("Please enter some data.", 'box'); return; }
+            const data = rawText.split(/[\s,;\n]+/).filter(n => n !== '').map(Number).filter(n => !isNaN(n));
+            if (data.length < 5) { showError("Please enter at least five valid numbers for a meaningful plot.", 'box'); return; }
+            data.sort((a, b) => a - b);
+            const results = calculateBoxPlotStats(data);
+            renderBoxPlot(results);
+            generateBoxPlotExplanation(results);
+            downloadBoxBtn.classList.remove('hidden-transition');
+        }
+
+        function getQuartile(arr, q) {
+            const pos = (arr.length - 1) * q, base = Math.floor(pos), rest = pos - base;
+            return (arr[base + 1] !== undefined) ? arr[base] + rest * (arr[base + 1] - arr[base]) : arr[base];
+        }
+
+        function calculateBoxPlotStats(data) {
+            const q1 = getQuartile(data, 0.25), median = getQuartile(data, 0.5), q3 = getQuartile(data, 0.75), iqr = q3 - q1;
+            const lowerFence = q1 - 1.5 * iqr, upperFence = q3 + 1.5 * iqr;
+            const outliers = data.filter(d => d < lowerFence || d > upperFence);
+            const regularData = data.filter(d => d >= lowerFence && d <= upperFence);
+            return { min: regularData[0], q1, median, q3, max: regularData[regularData.length - 1], iqr, outliers };
+        }
+
+        function renderBoxPlot(stats) {
+            if (boxPlotChart) boxPlotChart.destroy();
+            const boxPlotLabelsPlugin = { id: 'boxplotLabels', afterDatasetsDraw: (chart) => { const { ctx } = chart; ctx.save(); ctx.font = 'bold 12px Inter'; ctx.fillStyle = '#374151'; ctx.textAlign = 'center'; chart.data.datasets.forEach((dataset, i) => { const meta = chart.getDatasetMeta(i); if (!meta.hidden) { meta.data.forEach((element) => { const { min, q1, median, q3, max } = element.getProps(['min', 'q1', 'median', 'q3', 'max']); const y = element.y; [{ value: min, label: 'Min' }, { value: q1, label: 'Q1' }, { value: median, label: 'Median' }, { value: q3, label: 'Q3' }, { value: max, label: 'Max' }].forEach(({value, label}) => ctx.fillText(`${label}: ${value.toFixed(2)}`, chart.scales.x.getPixelForValue(value), y - element.height / 2 - 15)); }); } }); ctx.restore(); } };
+            boxPlotChart = new Chart(boxCtx, { type: 'boxplot', data: { labels: ['Data'], datasets: [{ label: 'Dataset', backgroundColor: 'rgba(220, 226, 239, 0.7)', borderColor: 'rgba(107, 114, 128, 1)', borderWidth: 1, data: [stats] }] }, options: { indexAxis: 'y', responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false }, datalabels: { display: false }, title: { display: true, text: 'Box and Whisker Plot', font: {size: 18} } } }, plugins: [boxPlotLabelsPlugin] });
+            boxPlaceholderText.classList.add('hidden-transition');
+        }
+
+        function generateBoxPlotExplanation(stats) {
+            const { q1, median, q3, iqr, outliers } = stats;
+            let skew = 'roughly symmetric';
+            if ((q3 - median) > (median - q1) * 1.1) skew = 'skewed to the right (positively skewed)';
+            if ((median - q1) > (q3 - median) * 1.1) skew = 'skewed to the left (negatively skewed)';
+            const text = `<p>A <strong>box and whisker plot</strong> summarizes your data into five key numbers.</p><dl class="stats-grid mt-2"><dt>1st Quartile (Q1):</dt><dd>${q1.toLocaleString()}</dd><dt>Median (Q2):</dt><dd>${median.toLocaleString()}</dd><dt>3rd Quartile (Q3):</dt><dd>${q3.toLocaleString()}</dd><dt>IQR:</dt><dd>${iqr.toFixed(2)}</dd></dl><ul class="list-disc list-inside mt-2 space-y-1"><li>The <strong>box</strong> shows the middle 50% of your data.</li><li>The <strong>line inside the box</strong> is the median.</li><li>The <strong>whiskers</strong> (lines) show the range of the typical data values.</li><li><strong>Outliers:</strong> ${outliers.length > 0 ? `Yes, the values <strong>${outliers.join(', ')}</strong> are outliers.` : 'No, there are no outliers.'}</li><li><strong>Distribution:</strong> The distribution appears to be <strong>${skew}</strong>.</li></ul>`;
+            boxExplanation.innerHTML = text;
+            boxExplanation.classList.remove('hidden-transition');
+        }
+
+        function downloadBoxPlot() { if (boxPlotChart) downloadCanvasAsHD(boxPlotChart, 'box-plot-hd.png'); }
+
+        function downloadCanvasAsHD(chartInstance, filename, htmlContent = null) {
+            const canvas = document.createElement('canvas');
+            canvas.width = 1920; canvas.height = 1080;
+            const ctx = canvas.getContext('2d');
+            ctx.fillStyle = '#FFFFFF'; ctx.fillRect(0, 0, canvas.width, canvas.height);
+            if (chartInstance) {
+                const newConfig = { type: chartInstance.config.type, data: chartInstance.config.data, plugins: chartInstance.config.plugins || [], options: { ...chartInstance.config.options } };
+                newConfig.options.responsive = false; newConfig.options.maintainAspectRatio = false; newConfig.options.animation = false;
+                newConfig.plugins.push({ id: 'customCanvasBackgroundColor', beforeDraw: (chart) => { const ctx = chart.canvas.getContext('2d'); ctx.save(); ctx.globalCompositeOperation = 'destination-over'; ctx.fillStyle = '#FFFFFF'; ctx.fillRect(0, 0, chart.width, chart.height); ctx.restore(); } });
+                const tempChart = new Chart(ctx, newConfig);
+                setTimeout(() => { const link = document.createElement('a'); link.href = tempChart.canvas.toDataURL('image/png', 1.0); link.download = filename; link.click(); tempChart.destroy(); }, 250);
+            } else if (htmlContent) {
+                const fontFamily = "'Courier New', Courier, monospace", fontSize = 48, lineHeight = fontSize * 1.2, padding = 50;
+                let currentY = padding + lineHeight;
+                const rows = htmlContent.querySelector('table').querySelectorAll('tr');
+                ctx.font = `bold ${fontSize}px ${fontFamily}`; ctx.fillStyle = '#000000';
+                ctx.fillText('Stem', padding, currentY); ctx.fillText('Leaf', padding + 300, currentY);
+                currentY += lineHeight;
+                ctx.font = `${fontSize}px ${fontFamily}`;
+                rows.forEach((row, index) => { if (index === 0) return; const cells = row.querySelectorAll('td'); ctx.fillText(cells[0].textContent, padding + 150 - ctx.measureText(cells[0].textContent).width, currentY); ctx.fillText(cells[1].textContent.split('').join(' '), padding + 300, currentY); currentY += lineHeight; });
+                currentY += lineHeight;
+                ctx.font = `bold ${fontSize * 0.8}px ${fontFamily}`; ctx.fillText(htmlContent.querySelector('div').textContent, padding, currentY);
+                const link = document.createElement('a'); link.href = canvas.toDataURL('image/png'); link.download = filename; link.click();
+            }
+        }
+
+        function showError(message, type) {
+            const errorEl = type === 'stem' ? stemErrorMessage : (type === 'ogive' ? ogiveErrorMessage : (type === 'stats' ? statsErrorMessage : (type === 'box' ? boxErrorMessage : errorMessage)));
+            const placeholderEl = type === 'stem' ? stemPlaceholderText : (type === 'ogive' ? ogivePlaceholderText : (type === 'stats' ? statsPlaceholderText : (type === 'box' ? boxPlaceholderText : placeholderText)));
+            const downloadButton = type === 'stem' ? downloadStemBtn : (type === 'ogive' ? downloadOgiveBtn : (type === 'box' ? downloadBoxBtn : downloadBtn));
+            const explanationEl = type === 'stem' ? stemExplanation : (type === 'ogive' ? ogiveExplanation : (type === 'stats' ? statsExplanation : (type === 'box' ? boxExplanation : histogramExplanation)));
+            errorEl.textContent = message; errorEl.classList.remove('hidden-transition');
+            placeholderEl.textContent = "Generation failed.";
+            if(placeholderEl.classList.contains('hidden-transition')) placeholderEl.classList.remove('hidden-transition');
+            if(type === 'hist') togglePolygonBtn.classList.add('hidden-transition');
+            if(downloadButton) downloadButton.classList.add('hidden-transition');
+            if (explanationEl) explanationEl.classList.add('hidden-transition');
+        }
+
+        function clearError(type) {
+            const errorEl = type === 'stem' ? stemErrorMessage : (type === 'ogive' ? ogiveErrorMessage : (type === 'stats' ? statsErrorMessage : (type === 'box' ? boxErrorMessage : errorMessage)));
+            const explanationEl = type === 'stem' ? stemExplanation : (type === 'ogive' ? ogiveExplanation : (type === 'stats' ? statsExplanation : (type === 'box' ? boxExplanation : histogramExplanation)));
+            errorEl.textContent = ''; errorEl.classList.add('hidden-transition');
+            if(explanationEl) explanationEl.classList.add('hidden-transition');
+        }
+    </script>
+</body>
+</html>
